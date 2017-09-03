@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>aframe-material😲😆😛</title>
+    <meta name="description" content="Aframe-Material">
+    <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="https://cdn.rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>
+    <script src="/dist/aframe-material.js"></script>
+    <script type="text/javascript">
+      AFRAME.ASSETS_PATH = "./assets";
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <a-entity id="leftHand" hand-controls="left"></a-entity>
+      <a-entity id="rightHand" hand-controls="right"></a-entity>
+      <a-entity laser-controls="hand: right"></a-entity>
+
+      <a-entity> <a-camera look-controls-enabled wasd-controls-enabled mouse-cursor></a-camera></a-entity>
+
+      <!-- BEGIN INPUTS/KEYBOARD -->
+      <a-keyboard></a-keyboard>
+      <a-input position="-1.25 2.1 -5" placeholder="Username" color="black" scale="2 2 2" width="1"></a-input>
+      <a-input position="-1.25 1.7 -5" type="password" placeholder="Password" color="black" scale="2 2 2" width="1"></a-input>
+      <!-- END INPUTS/KEYBOARD -->
+
+      <!-- BEGIN FORM -->
+      <a-rounded position="1 1.2 -5" width="4" height="3.1" radius="0.05" rotation="0 -5 0">
+        <a-form>
+          <a-switch position="0.2 2.7 0" enabled="true"></a-switch>
+          <a-radio position="0.2 2.4 0" width="3" name="food" label="Burger with fries and pizza" value="pizza"></a-radio>
+          <a-radio position="0.2 2.1 0" width="3" name="food" label="Veggies" checked="true" disabled="true"></a-radio>
+          <a-radio position="0.2 1.8 0" width="3" name="food" label="Ice cream"></a-radio>
+          <a-checkbox position="0.2 1.5 0" width="3" name="stuff" label="I am a checkbox" checked="true"></a-checkbox>
+          <a-checkbox position="0.2 1.2 0" width="3" name="stuff" label="And I am another one" checked="true" disabled="true"></a-checkbox>
+          <a-button position="0.2 0.8 0" name="stuff" value="Click me" type="raised"></a-button>
+          <a-button position="0.2 0.35 0" width="3" name="stuff" value="You cannot click me" type="raised" disabled="true"></a-button>
+        </a-form>
+      </a-rounded>
+      <!-- END FORM -->
+
+      <!-- BEGIN TOAST -->
+      <a-toast message="This is a toast" action="Got it"></a-toast>
+      <!-- END TOAST -->
+
+      <!-- BEGIN ENVIRONEMENT -->
+      <a-gradient-sky material="shader: gradient; topColor: 255 0 0; bottomColor: 0 121 255;"></a-gradient-sky>
+      <!-- END ENVIRONEMENT -->
+    </a-scene>
+  </body>
+</html>
