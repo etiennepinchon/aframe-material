@@ -62,11 +62,11 @@ Since this kit is using assets (icons and sounds) you need to download the git p
 </head>
 ```
 
-## Documentation 🙌
-
 -----------------------------------------------
 
-# 👉👉 a-keyboard ⌨️
+# Documentation 🙌
+
+# 👉👉 a-keyboard ⌨️🤤
 
 Create a virtual keyboard that works with inputs out of the box.
 
