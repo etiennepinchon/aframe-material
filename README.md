@@ -64,7 +64,7 @@ Since this kit is using assets (icons and sounds) you need to download the git p
 
 ## Documentation 🙌
 
-## <a-keyboard>
+## a-keyboard ⌨️
 
 Create a virtual keyboard that works with inputs out of the box.
 
@@ -116,7 +116,7 @@ keyboard.addEventListener('backspace', (e)=>{
 });
 ```
 
-## <a-input>
+## a-input
 
 Create a single line text input that work with the `<a-keyboard>`.
 
@@ -188,7 +188,7 @@ Create a button (can be raised of flat).
 | --- | --- |
 | change:width | Triggered when the width of the button changed. |
 
-## <a-form>
+## a-form
 
 Create a form to get the same html `<form>` behaviors with `<a-input>`, `<a-radio>`, `<a-button>`, `<a-switch>`, `<a-checkbox>`.
 
@@ -196,7 +196,7 @@ Create a form to get the same html `<form>` behaviors with `<a-input>`, `<a-radi
 <a-form></a-form>
 ```
 
-## <a-radio>
+## a-radio
 
 Create a radio button.
 
@@ -226,7 +226,7 @@ Create a radio button.
 | --- | --- |
 | change | Triggered when the value of the radio button changed. |
 
-## <a-checkbox>
+## a-checkbox
 
 Create a checkbox.
 
@@ -257,7 +257,7 @@ Create a checkbox.
 | change | Triggered when the value of the checkbox changed. |
 
 
-## <a-switch>
+## a-switch
 
 Create a switch button that can be toggle on/off.
 
@@ -272,7 +272,6 @@ Create a switch button that can be toggle on/off.
 | enabled | Whether or not the switch should be enabled. | boolean | false |
 | name | Name of the checkbox. | string | "" |
 | disabled | Whether or not the switch should be disabled. | boolean | false |
-
 | fill-color | Color of the fill when off. | color | "#bababa" |
 | knob-color | Color of the knob when off. | color | "#f5f5f5" |
 | fill-color-enabled | Color of the fill when on. | color | "#80a8ff" |
@@ -287,7 +286,7 @@ Create a switch button that can be toggle on/off.
 | change | Triggered when the switch is toggled. |
 
 
-## <a-toast>
+## a-toast
 
 Create a toast to alert the user of something.
 
@@ -306,7 +305,7 @@ Create a toast to alert the user of something.
 | font | Text font | string. | "default" |
 | width | Width of the input. | number | 1 |
 | duration | Duration of the toast | number | 2000 (2sec) |
-| autoshow | Whether the toast should show right away | boolean | true |
+| autoshow | Whether the toast should show right away. | boolean | true |
 
 ### Events
 
