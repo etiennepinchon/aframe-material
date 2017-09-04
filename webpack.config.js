@@ -46,11 +46,8 @@ if (process.env.NODE_ENV === 'production') {
 // dist/
 var filename = 'aframe-material.js';
 var outPath = 'dist';
-if (process.env.AFRAME_DIST) {
-  outPath = 'dist';
-  if (process.env.NODE_ENV === 'production') {
-    filename = 'aframe-material.min.js';
-  }
+if (process.env.NODE_ENV === 'production') {
+  filename = 'aframe-material.min.js';
 }
 
 module.exports = {
