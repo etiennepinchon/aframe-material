@@ -64,7 +64,9 @@ Since this kit is using assets (icons and sounds) you need to download the git p
 
 ## Documentation 🙌
 
-## a-keyboard ⌨️
+-----------------------------------------------
+
+# 👉👉 a-keyboard ⌨️
 
 Create a virtual keyboard that works with inputs out of the box.
 
@@ -116,7 +118,9 @@ keyboard.addEventListener('backspace', (e)=>{
 });
 ```
 
-## a-input
+-----------------------------------------------
+
+# 👉👉 a-input
 
 Create a single line text input that work with the `<a-keyboard>`.
 
@@ -160,7 +164,9 @@ Create a single line text input that work with the `<a-keyboard>`.
 | blur | Triggered when the input is blurred. |
 | change | Triggered when the value of the input changed. |
 
-## <a-button>
+-----------------------------------------------
+
+# 👉👉 a-button
 
 Create a button (can be raised of flat).
 
@@ -196,7 +202,9 @@ Create a form to get the same html `<form>` behaviors with `<a-input>`, `<a-radi
 <a-form></a-form>
 ```
 
-## a-radio
+-----------------------------------------------
+
+# 👉👉 a-radio
 
 Create a radio button.
 
@@ -226,7 +234,9 @@ Create a radio button.
 | --- | --- |
 | change | Triggered when the value of the radio button changed. |
 
-## a-checkbox
+-----------------------------------------------
+
+# 👉👉 a-checkbox
 
 Create a checkbox.
 
@@ -256,8 +266,9 @@ Create a checkbox.
 | --- | --- |
 | change | Triggered when the value of the checkbox changed. |
 
+-----------------------------------------------
 
-## a-switch
+# 👉👉 a-switch
 
 Create a switch button that can be toggle on/off.
 
@@ -285,8 +296,9 @@ Create a switch button that can be toggle on/off.
 | --- | --- |
 | change | Triggered when the switch is toggled. |
 
+-----------------------------------------------
 
-## a-toast
+# 👉👉 a-toast
 
 Create a toast to alert the user of something.
 
@@ -326,11 +338,15 @@ button.addEventListener('click', ()=> {
 })
 ```
 
-## <a-rounded>
+-----------------------------------------------
+
+# 👉👉 a-rounded
 
 Create a rounded rectangle, useful to create beautiful interfaces 😁.
 
 [👉 github.com/etiennepinchon/aframe-rounded](https://github.com/etiennepinchon/aframe-rounded)
+
+-----------------------------------------------
 
 ## Want to make some changes to it?
 
