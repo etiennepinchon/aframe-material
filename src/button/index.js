@@ -24,11 +24,10 @@ AFRAME.registerComponent('button', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.SFX = SFX.init();
-    this.el.appendChild( this.SFX );
+    SFX.init(this.el);
 
     this.wrapper = document.createElement('a-entity');
-    this.wrapper.setAttribute('position', '0 0 0.001')
+    this.wrapper.setAttribute('position', '0 0 0.01')
     this.el.appendChild(this.wrapper);
 
     this.shadow = document.createElement('a-image');
@@ -40,7 +39,7 @@ AFRAME.registerComponent('button', {
     this.outline = document.createElement('a-rounded');
     this.outline.setAttribute('height', 0.36);
     this.outline.setAttribute('radius', 0.03);
-    this.outline.setAttribute('position', `0 -${0.36/2} 0.001`);
+    this.outline.setAttribute('position', `0 -${0.36/2} 0.01`);
     this.wrapper.appendChild(this.outline);
 
     // LABEL
@@ -49,18 +48,18 @@ AFRAME.registerComponent('button', {
 
     // EVENTS
     this.el.addEventListener('click', function() {
-      if (this.components.button.data.disabled) { return; }
+      if (this.components.button && this.components.button.data.disabled) { return; }
       that.onClick();
     });
     this.el.addEventListener('mousedown', function() {
-      if (this.components.button.data.disabled) {
-        return SFX.clickDisabled(that.SFX);
+      if (this.components.button && this.components.button.data.disabled) {
+        return SFX.clickDisabled(this);
       }
       that.wrapper.setAttribute('position', `0 0 0.036`);
-      SFX.click(that.SFX);
+      SFX.click(this);
     });
     this.el.addEventListener('mouseup', function() {
-      if (this.components.button.data.disabled) { return; }
+      if (this.components.button && this.components.button.data.disabled) { return; }
       that.wrapper.setAttribute('position', `0 0 0`);
     });
 
@@ -97,18 +96,27 @@ AFRAME.registerComponent('button', {
     // TITLE
     props.value = this.data.value.toUpperCase();
     this.label.setAttribute('text', props);
-    this.label.setAttribute('position', this.data.width/2+0.24+' 0 0.001');
+    this.label.setAttribute('position', this.data.width/2+0.24+' 0 0.01');
 
     // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
-    function getTextWidth(el, _widthFactor) {
+    function getTextWidth(el, callback, _widthFactor) {
+      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) {
+        return setTimeout(function() {
+          getTextWidth(el, callback);
+        }, 10);
+       }
       let v = el.object3D.children[0].geometry.visibleGlyphs;
-      if (!v) { return 0; }
+      if (!v) {
+        return setTimeout(function() {
+          getTextWidth(el, callback);
+        }, 10);
+      }
       v = v[v.length-1];
-      if (!v) { return 0; }
+      if (!v) { return callback(0); }
       if (v.line) {
         props.value = props.value.slice(0, -1);
         el.setAttribute("text", props);
-        return getTextWidth(el);
+        return getTextWidth(el, callback);
       } else {
         if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, props.wrapCount); }
         v = (v.position[0] + v.data.width ) / (_widthFactor/that.data.width);
@@ -116,34 +124,52 @@ AFRAME.registerComponent('button', {
         if (textRatio > 1) {
           props.value = props.value.slice(0, -1);
           el.setAttribute("text", props);
-          return getTextWidth(el, _widthFactor);
+          return getTextWidth(el, callback, _widthFactor);
         }
       }
-      return v;
+      return callback(v);
     }
     setTimeout(function() {
       if (that.data.value.length) {
-        let width = getTextWidth(that.label);
-        that.label.setAttribute('position', `${width/2+0.28/2} ${0.36/2} 0.002`);//
-        width = width+0.28;
-        that.outline.setAttribute('width', width);
-        that.__width = width;
-        that.shadow.setAttribute('width', width*1.17);
-        that.shadow.setAttribute('position', width/2+' 0 0');
-        Event.emit(that.el, 'change:width', width)
+        getTextWidth(that.label, (width)=>{
+          that.label.setAttribute('position', `${width/2+0.28/2} ${0.36/2} 0.02`);//
+          width = width+0.28;
+          that.outline.setAttribute('width', width);
+          that.__width = width;
+          that.shadow.setAttribute('width', width*1.17);
+          that.shadow.setAttribute('position', width/2+' 0 0');
+          Event.emit(that.el, 'change:width', width)
+        });
       }
 
       if (that.data.disabled) {
         that.shadow.setAttribute('visible', false);
-        Utils.updateOpacity(that.el, 0.4);
+        let timer = setInterval(function() {
+          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.el, 0.4);
+          }
+        }, 10)
       } else {
-        that.shadow.setAttribute('visible', true);
-        Utils.updateOpacity(that.el, 1);
+        let timer = setInterval(function() {
+          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.el, 1);
+          }
+        }, 10)
       }
 
       if (that.data.type === "flat") {
         that.shadow.setAttribute('visible', false);
-        Utils.updateOpacity(that.outline, 0);
+        let timer = setInterval(function() {
+          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.outline, 0);
+            if (that.data.disabled) {
+              Utils.updateOpacity(that.label, 0.4);
+            }
+          }
+        }, 10)
       }
     }, 0);
   },

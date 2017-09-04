@@ -1,27 +1,32 @@
-# A-Frame Material Kit
+# A-Frame Material Kit 👽
 
-Inputs, keyboard, buttons, checkbox, radio button, switch, form, toast and more - following the Google Material design guideline for [A-Frame](https://aframe.io).
-It is perfect for room-scale webVR apps.
+This is real! WebVR is getting even better!
+Inputs, keyboard, buttons, checkboxes, radio buttons, switches, forms, toasts and more - following the Google Material design guideline for [A-Frame](https://aframe.io).
+It is perfect for room-scale webVR apps. 👌
 
-![Alt text](static/screenshot.png)
+![](static/screenshot.png)
 
 ## Demo
 
 #### [👉👉 Live demo 😎 👈👈](https://etiennepinchon.github.io/aframe-material/)
+
+Looks surreal if you have a headset! :)
 
 ## Getting Started
 
 Here is the code from the demo. That is it. Pure html!
 
 ```html
+<a-entity laser-controls="hand: right"></a-entity>
+
 <!-- BEGIN INPUTS/KEYBOARD -->
 <a-keyboard></a-keyboard>
-<a-input position="-1.25 2.1 -5" placeholder="Username" color="black" scale="2 2 2" width="1"></a-input>
-<a-input position="-1.25 1.7 -5" type="password" placeholder="Password" color="black" scale="2 2 2" width="1"></a-input>
+<a-input position="-0.7 1 -2.5" placeholder="Username" color="black" width="1"></a-input>
+<a-input position="-0.7 0.8 -2.5" type="password" placeholder="Password" color="black" width="1"></a-input>
 <!-- END INPUTS/KEYBOARD -->
 
 <!-- BEGIN FORM -->
-<a-rounded position="1 1.2 -5" width="4" height="3.1" radius="0.05" rotation="0 -5 0">
+<a-rounded position="0.5 0.5 -2.5" width="4" height="3.1" radius="0.05" rotation="0 -20 0" scale="0.3 0.3 0.3">
   <a-form>
     <a-switch position="0.2 2.7 0" enabled="true"></a-switch>
     <a-radio position="0.2 2.4 0" width="3" name="food" label="Burger with fries and pizza" value="pizza"></a-radio>
@@ -30,7 +35,7 @@ Here is the code from the demo. That is it. Pure html!
     <a-checkbox position="0.2 1.5 0" width="3" name="stuff" label="I am a checkbox" checked="true"></a-checkbox>
     <a-checkbox position="0.2 1.2 0" width="3" name="stuff" label="And I am another one" checked="true" disabled="true"></a-checkbox>
     <a-button position="0.2 0.8 0" name="stuff" value="Click me" type="raised"></a-button>
-    <a-button position="0.2 0.35 0" width="3" name="stuff" value="You cannot click me" type="raised" disabled="true"></a-button>
+    <a-button position="0.2 0.35 0" width="3" name="stuff" value="You cannot click me" disabled="true"></a-button>
   </a-form>
 </a-rounded>
 <!-- END FORM -->
@@ -300,29 +305,33 @@ Create a toast to alert the user of something.
 | background-color | Color of the toast. | color | "#4076fd" |
 | font | Text font | string. | "default" |
 | width | Width of the input. | number | 1 |
+| duration | Duration of the toast | number | 2000 (2sec) |
+| autoshow | Whether the toast should show right away | boolean | true |
+
+### Events
+
+| Name | Description |
+| --- | --- |
+| actionclick | Triggered when the action is clicked. |
+
+### Custom example (just in case 😉)
+
+```javascript
+let button = document.querySelector('a-button');
+let toast = document.querySelector('a-toast');
+toast.addEventListener('actionclick', ()=>{
+  toast.hide();
+})
+button.addEventListener('click', ()=> {
+  toast.show();
+})
+```
 
 ## <a-rounded>
 
 Create a rounded rectangle, useful to create beautiful interfaces 😁.
 
-```html
-<a-rounded position="0 1.2 -5" width="4" height="3.1" radius="0.05"></a-rounded>
-```
-
-### Attributes
-
-| Name | Description | Type | Default |
-| --- | --- | --- | --- |
-| width | Width of the container | number | 1 |
-| height | Height of the container | number | 1 |
-| radius | Border radius of the container | number | 0.3 |
-| top-left-radius | Border radius of the container | number | -1 (inherit) |
-| top-right-radius | Border radius of the container | number | -1 (inherit) |
-| bottom-left-radius | Border radius of the container | number | -1 (inherit) |
-| bottom-right-radius | Border radius of the container | number | -1 (inherit) |
-| color | Color of the container. | color | "#F0F0F0" |
-| opacity | Opacity of the container | opacity | 1 |
-
+[👉 github.com/etiennepinchon/aframe-rounded](https://github.com/etiennepinchon/aframe-rounded)
 
 ## Want to make some changes to it?
 
@@ -352,4 +361,4 @@ Then launch the site from your favorite browser:
 
 Distributed under an [MIT License](LICENSE).
 
-Made by Etienne Pinchon (@etiennepinchon).
+Made by Etienne Pinchon (@etiennepinchon) - September 2017.

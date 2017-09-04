@@ -60,21 +60,26 @@
 	  if (!AFRAME.ASSETS_PATH) {
 	    AFRAME.ASSETS_PATH = "./assets";
 	  }
-	  __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"aframe-rounded\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	  __webpack_require__(2);
 	  __webpack_require__(3);
 	  //require("./alert"); @TODO ;)
-	  __webpack_require__(7);
+	  __webpack_require__(5);
+	  __webpack_require__(13);
 	  __webpack_require__(14);
-	  __webpack_require__(15);
+	  __webpack_require__(17);
 	  __webpack_require__(18);
-	  __webpack_require__(19);
-	  __webpack_require__(22);
-	  __webpack_require__(25);
-	  __webpack_require__(28);
+	  __webpack_require__(21);
+	  __webpack_require__(24);
+	  __webpack_require__(27);
 	})();
 
 /***/ }),
-/* 2 */,
+/* 2 */
+/***/ (function(module, exports) {
+
+	!function(t){function e(i){if(a[i])return a[i].exports;var d=a[i]={exports:{},id:i,loaded:!1};return t[i].call(d.exports,d,d.exports,e),d.loaded=!0,d.exports}var a={};return e.m=t,e.c=a,e.p="",e(0)}([function(t,e){AFRAME.registerComponent("rounded",{schema:{enabled:{default:!0},width:{type:"number",default:1},height:{type:"number",default:1},radius:{type:"number",default:.3},topLeftRadius:{type:"number",default:-1},topRightRadius:{type:"number",default:-1},bottomLeftRadius:{type:"number",default:-1},bottomRightRadius:{type:"number",default:-1},color:{type:"color",default:"#F0F0F0"},opacity:{type:"number",default:1}},init:function(){this.rounded=new THREE.Mesh(this.draw(),new THREE.MeshPhongMaterial({color:new THREE.Color(this.data.color),side:THREE.DoubleSide})),this.updateOpacity(),this.el.setObject3D("mesh",this.rounded)},update:function(){this.data.enabled?this.rounded&&(this.rounded.visible=!0,this.rounded.geometry=this.draw(),this.rounded.material.color=new THREE.Color(this.data.color),this.updateOpacity()):this.rounded.visible=!1},updateOpacity:function(){this.data.opacity<0&&(this.data.opacity=0),this.data.opacity>1&&(this.data.opacity=1),this.data.opacity<1?this.rounded.material.transparent=!0:this.rounded.material.transparent=!1,this.rounded.material.opacity=this.data.opacity},tick:function(){},remove:function(){this.rounded&&(this.el.object3D.remove(this.rounded),this.rounded=null)},draw:function(){function t(t,e,a,i,d,o,u,r,s){o||(o=1e-5),u||(u=1e-5),r||(r=1e-5),s||(s=1e-5),t.moveTo(e,a+o),t.lineTo(e,a+d-o),t.quadraticCurveTo(e,a+d,e+o,a+d),t.lineTo(e+i-u,a+d),t.quadraticCurveTo(e+i,a+d,e+i,a+d-u),t.lineTo(e+i,a+s),t.quadraticCurveTo(e+i,a,e+i-s,a),t.lineTo(e+r,a),t.quadraticCurveTo(e,a,e,a+r)}var e=new THREE.Shape,a=[this.data.radius,this.data.radius,this.data.radius,this.data.radius];return this.data.topLeftRadius!=-1&&(a[0]=this.data.topLeftRadius),this.data.topRightRadius!=-1&&(a[1]=this.data.topRightRadius),this.data.bottomLeftRadius!=-1&&(a[2]=this.data.bottomLeftRadius),this.data.bottomRightRadius!=-1&&(a[3]=this.data.bottomRightRadius),t(e,0,0,this.data.width,this.data.height,a[0],a[1],a[2],a[3]),new THREE.ShapeBufferGeometry(e)},pause:function(){},play:function(){}}),AFRAME.registerPrimitive("a-rounded",{defaultComponents:{rounded:{}},mappings:{enabled:"rounded.enabled",width:"rounded.width",height:"rounded.height",radius:"rounded.radius","top-left-radius":"rounded.topLeftRadius","top-right-radius":"rounded.topRightRadius","bottom-left-radius":"rounded.bottomLeftRadius","bottom-right-radius":"rounded.bottomRightRadius",color:"rounded.color",opacity:"rounded.opacity"}})}]);
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -204,7 +209,121 @@
 	};
 
 /***/ }),
-/* 5 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Utils = __webpack_require__(6);
+	var Assets = __webpack_require__(7);
+	var Draw = __webpack_require__(8);
+	var Behaviors = __webpack_require__(11);
+	var SFX = __webpack_require__(12);
+	
+	AFRAME.registerComponent('keyboard', {
+	  schema: {
+	    isOpen: { type: "boolean", default: false }
+	  },
+	  currentInput: null,
+	  init: function init() {
+	    // Assets
+	    Utils.preloadAssets(Assets);
+	
+	    // SFX
+	    SFX.init(this.el);
+	
+	    // Draw
+	    Draw.init(this.el);
+	
+	    var numericalUI = Draw.numericalUI(),
+	        mainUI = Draw.mainUI(),
+	        actionsUI = Draw.actionsUI();
+	
+	    this.el.alphabeticalLayout = Draw.alphabeticalLayout();
+	    this.el.symbolsLayout = Draw.symbolsLayout();
+	
+	    numericalUI.appendChild(Draw.numericalLayout());
+	    mainUI.appendChild(this.el.alphabeticalLayout);
+	    actionsUI.appendChild(Draw.actionsLayout());
+	
+	    this.el.appendChild(numericalUI);
+	    this.el.appendChild(mainUI);
+	    this.el.appendChild(actionsUI);
+	
+	    // Inject methods in elements..
+	    this.el.show = function () {
+	      Behaviors.showKeyboard(that.el);
+	    };
+	    this.el.hide = function () {
+	      Behaviors.hideKeyboard(that.el);
+	    };
+	    this.el.open = function () {
+	      Behaviors.openKeyboard(that.el);
+	    };
+	    this.el.dismiss = function () {
+	      Behaviors.dismissKeyboard(that.el);
+	    };
+	    this.el.destroy = function () {
+	      Behaviors.destroyKeyboard(that.el);
+	    };
+	
+	    this.el.setAttribute("scale", "2 2 2");
+	    this.el.setAttribute("rotation", "-20 0 0");
+	    this.el.setAttribute("position", "-1.5 -0.3 -2");
+	
+	    var that = this;
+	    this.el.addEventListener('input', function (e) {
+	      if (that.currentInput) {
+	        that.currentInput.appendString(e.detail);
+	      }
+	    });
+	    this.el.addEventListener('backspace', function (e) {
+	      if (that.currentInput) {
+	        that.currentInput.deleteLast();
+	      }
+	    });
+	    this.el.addEventListener('dismiss', function (e) {
+	      if (that.currentInput) {
+	        that.currentInput.blur();
+	      }
+	    });
+	    document.body.addEventListener('didfocusinput', function (e) {
+	      if (that.currentInput) {
+	        that.currentInput.blur(true);
+	      }
+	      that.currentInput = e.detail;
+	      if (!that.el.isOpen) {
+	        Behaviors.openKeyboard(that.el);
+	      }
+	    });
+	    document.body.addEventListener('didblurinput', function (e) {
+	      that.currentInput = null;
+	      Behaviors.dismissKeyboard(that.el);
+	    });
+	  },
+	  update: function update() {
+	    if (this.data.isOpen) {
+	      Behaviors.showKeyboard(this.el);
+	    } else {
+	      Behaviors.hideKeyboard(this.el);
+	    }
+	  },
+	  tick: function tick() {},
+	  remove: function remove() {},
+	  pause: function pause() {},
+	  play: function play() {}
+	});
+	
+	AFRAME.registerPrimitive('a-keyboard', {
+	  defaultComponents: {
+	    keyboard: {}
+	  },
+	  mappings: {
+	    'is-open': 'keyboard.isOpen'
+	  }
+	});
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports) {
 
@@ -299,11 +418,32 @@
 	  return a;
 	};
 	
+	Utils.clone = function (original) {
+	  if (Array.isArray(original)) {
+	    return original.slice(0);
+	  }
+	
+	  // First create an empty object with
+	  // same prototype of our original source
+	  var clone = Object.create(Object.getPrototypeOf(original));
+	  var i = undefined;
+	  var keys = Object.getOwnPropertyNames(original);
+	  i = 0;
+	  while (i < keys.length) {
+	    // copy each property into the clone
+	    Object.defineProperty(clone, keys[i], Object.getOwnPropertyDescriptor(original, keys[i]));
+	    i++;
+	  }
+	  return clone;
+	};
+	
 	Utils.updateOpacity = function (el, opacity) {
 	  if (el.hasAttribute('text')) {
 	    var props = el.getAttribute('text');
-	    props.opacity = opacity;
-	    el.setAttribute('text', props);
+	    if (props) {
+	      props.opacity = opacity;
+	      el.setAttribute('text', props);
+	    }
 	  }
 	  el.object3D.traverse(function (o) {
 	    if (o.material) {
@@ -351,122 +491,6 @@
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Utils = __webpack_require__(6);
-	var Assets = __webpack_require__(8);
-	var Draw = __webpack_require__(9);
-	var Behaviors = __webpack_require__(12);
-	var SFX = __webpack_require__(13);
-	
-	AFRAME.registerComponent('keyboard', {
-	  schema: {
-	    isOpen: { type: "boolean", default: false }
-	  },
-	  currentInput: null,
-	  init: function init() {
-	    // Assets
-	    Utils.preloadAssets(Assets);
-	
-	    // SFX
-	    this.el.SFX = SFX.init();
-	    this.el.appendChild(this.el.SFX);
-	
-	    // Draw
-	    Draw.init(this.el);
-	
-	    var numericalUI = Draw.numericalUI(),
-	        mainUI = Draw.mainUI(),
-	        actionsUI = Draw.actionsUI();
-	
-	    this.el.alphabeticalLayout = Draw.alphabeticalLayout();
-	    this.el.symbolsLayout = Draw.symbolsLayout();
-	
-	    numericalUI.appendChild(Draw.numericalLayout());
-	    mainUI.appendChild(this.el.alphabeticalLayout);
-	    actionsUI.appendChild(Draw.actionsLayout());
-	
-	    this.el.appendChild(numericalUI);
-	    this.el.appendChild(mainUI);
-	    this.el.appendChild(actionsUI);
-	
-	    // Inject methods in elements..
-	    this.el.show = function () {
-	      Behaviors.showKeyboard(that.el);
-	    };
-	    this.el.hide = function () {
-	      Behaviors.hideKeyboard(that.el);
-	    };
-	    this.el.open = function () {
-	      Behaviors.openKeyboard(that.el);
-	    };
-	    this.el.dismiss = function () {
-	      Behaviors.dismissKeyboard(that.el);
-	    };
-	    this.el.destroy = function () {
-	      Behaviors.destroyKeyboard(that.el);
-	    };
-	
-	    this.el.setAttribute("scale", "5 5 5");
-	    this.el.setAttribute("rotation", "-20 0 0");
-	    this.el.setAttribute("position", "-3.65 -0.8 -4");
-	
-	    var that = this;
-	    this.el.addEventListener('input', function (e) {
-	      if (that.currentInput) {
-	        that.currentInput.appendString(e.detail);
-	      }
-	    });
-	    this.el.addEventListener('backspace', function (e) {
-	      if (that.currentInput) {
-	        that.currentInput.deleteLast();
-	      }
-	    });
-	    this.el.addEventListener('dismiss', function (e) {
-	      if (that.currentInput) {
-	        that.currentInput.blur();
-	      }
-	    });
-	    document.body.addEventListener('didfocusinput', function (e) {
-	      if (that.currentInput) {
-	        that.currentInput.blur(true);
-	      }
-	      that.currentInput = e.detail;
-	      if (!that.el.isOpen) {
-	        Behaviors.openKeyboard(that.el);
-	      }
-	    });
-	    document.body.addEventListener('didblurinput', function (e) {
-	      that.currentInput = null;
-	      Behaviors.dismissKeyboard(that.el);
-	    });
-	  },
-	  update: function update() {
-	    if (this.data.isOpen) {
-	      Behaviors.showKeyboard(this.el);
-	    } else {
-	      Behaviors.hideKeyboard(this.el);
-	    }
-	  },
-	  tick: function tick() {},
-	  remove: function remove() {},
-	  pause: function pause() {},
-	  play: function play() {}
-	});
-	
-	AFRAME.registerPrimitive('a-keyboard', {
-	  defaultComponents: {
-	    keyboard: {}
-	  },
-	  mappings: {
-	    'is-open': 'keyboard.isOpen'
-	  }
-	});
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -474,14 +498,14 @@
 	module.exports = [{ type: 'img', id: 'aframeKeyboardShift', src: AFRAME.ASSETS_PATH + '/images/ShiftIcon.png' }, { type: 'img', id: 'aframeKeyboardShiftActive', src: AFRAME.ASSETS_PATH + '/images/ShiftActiveIcon.png' }, { type: 'img', id: 'aframeKeyboardGlobal', src: AFRAME.ASSETS_PATH + '/images/GlobalIcon.png' }, { type: 'img', id: 'aframeKeyboardBackspace', src: AFRAME.ASSETS_PATH + '/images/BackspaceIcon.png' }, { type: 'img', id: 'aframeKeyboardEnter', src: AFRAME.ASSETS_PATH + '/images/EnterIcon.png' }, { type: 'img', id: 'aframeKeyboardDismiss', src: AFRAME.ASSETS_PATH + '/images/DismissIcon.png' }, { type: 'img', id: 'aframeKeyboardShadow', src: AFRAME.ASSETS_PATH + '/images/KeyShadow.png' }, { type: 'audio', id: 'aframeKeyboardKeyIn', src: AFRAME.ASSETS_PATH + '/sounds/KeyIn.mp3' }, { type: 'audio', id: 'aframeKeyboardKeyDown', src: AFRAME.ASSETS_PATH + '/sounds/KeyDown.mp3' }];
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Layouts = __webpack_require__(10);
-	var Config = __webpack_require__(11);
-	var Behaviors = __webpack_require__(12);
+	var Layouts = __webpack_require__(9);
+	var Config = __webpack_require__(10);
+	var Behaviors = __webpack_require__(11);
 	var Draw = {};
 	
 	Draw.el = null;
@@ -733,7 +757,7 @@
 	    var letter_el = document.createElement('a-text');
 	    letter_el.setAttribute('value', value);
 	    letter_el.setAttribute('color', '#dbddde');
-	    letter_el.setAttribute('position', Config.KEY_WIDTH / 2 + ' ' + Config.KEY_WIDTH / 2 + ' 0');
+	    letter_el.setAttribute('position', Config.KEY_WIDTH / 2 + ' ' + Config.KEY_WIDTH / 2 + ' 0.01');
 	    letter_el.setAttribute('scale', '0.16 0.16 0.16');
 	    letter_el.setAttribute('align', 'center');
 	    letter_el.setAttribute('baseline', 'center');
@@ -749,7 +773,7 @@
 	    el.setAttribute('color', '#404b50');
 	    el.shadow_el.setAttribute('width', Config.SPACE_KEY_WIDTH * 1.12);
 	    el.shadow_el.setAttribute('height', Config.SPACE_KEY_HEIGHT * 1.2);
-	    el.shadow_el.setAttribute('position', Config.SPACE_KEY_WIDTH / 2 + ' ' + Config.SPACE_KEY_HEIGHT / 2 + ' -0.002');
+	    el.shadow_el.setAttribute('position', Config.SPACE_KEY_WIDTH / 2 + ' ' + Config.SPACE_KEY_HEIGHT / 2 + ' -0.02');
 	    letter_el.setAttribute('color', '#adb1b3');
 	    letter_el.setAttribute('scale', '0.12 0.12 0.12');
 	    letter_el.setAttribute('position', Config.SPACE_KEY_WIDTH / 2 + ' ' + Config.SPACE_KEY_HEIGHT / 2 + ' 0');
@@ -768,7 +792,7 @@
 	  if (type === 'backspace' || type === 'enter' || type === 'dismiss') {
 	    el.setAttribute('width', Config.ACTION_WIDTH);
 	    el.shadow_el.setAttribute('width', Config.ACTION_WIDTH * 1.25);
-	    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH / 2 + ' ' + Config.KEY_WIDTH / 2 + ' -0.002');
+	    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH / 2 + ' ' + Config.KEY_WIDTH / 2 + ' -0.02');
 	  }
 	
 	  // ---------------------------------------------------------------------------
@@ -779,7 +803,7 @@
 	    icon_el.setAttribute('data-type', 'icon');
 	    icon_el.setAttribute('width', '0.032');
 	    icon_el.setAttribute('height', '0.032');
-	    icon_el.setAttribute('position', '0.04 0.04 0.001');
+	    icon_el.setAttribute('position', '0.04 0.04 0.01');
 	    icon_el.setAttribute('src', '#aframeKeyboardShift');
 	    el.appendChild(icon_el);
 	    Draw.el.shiftKey = el;
@@ -792,7 +816,7 @@
 	      var icon_el = document.createElement('a-image');
 	      icon_el.setAttribute('width', '0.032');
 	      icon_el.setAttribute('height', '0.032');
-	      icon_el.setAttribute('position', '0.04 0.04 0.001');
+	      icon_el.setAttribute('position', '0.04 0.04 0.01');
 	      icon_el.setAttribute('src', '#aframeKeyboardGlobal');
 	      el.appendChild(icon_el);
 	    }
@@ -804,7 +828,7 @@
 	        var icon_el = document.createElement('a-image');
 	        icon_el.setAttribute('width', '0.046');
 	        icon_el.setAttribute('height', '0.046');
-	        icon_el.setAttribute('position', '0.07 0.04 0.001');
+	        icon_el.setAttribute('position', '0.07 0.04 0.01');
 	        icon_el.setAttribute('src', '#aframeKeyboardBackspace');
 	        el.appendChild(icon_el);
 	      }
@@ -815,18 +839,18 @@
 	      else if (type === 'enter') {
 	          el.setAttribute('height', Config.ACTION_WIDTH);
 	          el.shadow_el.setAttribute('height', Config.ACTION_WIDTH * 1.25);
-	          el.shadow_el.setAttribute('position', Config.ACTION_WIDTH / 2 + ' ' + Config.ACTION_WIDTH / 2 + ' -0.002');
+	          el.shadow_el.setAttribute('position', Config.ACTION_WIDTH / 2 + ' ' + Config.ACTION_WIDTH / 2 + ' -0.02');
 	
 	          var circle_el = document.createElement('a-circle');
 	          circle_el.setAttribute('color', '#4285f4');
 	          circle_el.setAttribute('radius', 0.044);
-	          circle_el.setAttribute('position', '0.07 0.07 0.001');
+	          circle_el.setAttribute('position', '0.07 0.07 0.01');
 	          el.appendChild(circle_el);
 	
 	          var icon_el = document.createElement('a-image');
 	          icon_el.setAttribute('width', '0.034');
 	          icon_el.setAttribute('height', '0.034');
-	          icon_el.setAttribute('position', '0.07 0.07 0.0011');
+	          icon_el.setAttribute('position', '0.07 0.07 0.011');
 	          icon_el.setAttribute('src', '#aframeKeyboardEnter');
 	          el.appendChild(icon_el);
 	        }
@@ -838,7 +862,7 @@
 	            var icon_el = document.createElement('a-image');
 	            icon_el.setAttribute('width', '0.046');
 	            icon_el.setAttribute('height', '0.046');
-	            icon_el.setAttribute('position', '0.07 0.04 0.001');
+	            icon_el.setAttribute('position', '0.07 0.04 0.01');
 	            icon_el.setAttribute('src', '#aframeKeyboardDismiss');
 	            el.appendChild(icon_el);
 	          }
@@ -849,7 +873,7 @@
 	module.exports = Draw;
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -867,7 +891,7 @@
 	module.exports = Layouts;
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -887,19 +911,18 @@
 	module.exports = Config;
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Config = __webpack_require__(11);
+	var Config = __webpack_require__(10);
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var SFX = __webpack_require__(13);
+	var SFX = __webpack_require__(12);
 	var Behaviors = {};
 	
 	Behaviors.el = null;
-	Behaviors.SFX = null;
 	
 	// -----------------------------------------------------------------------------
 	// KEYBOARD METHODS
@@ -1144,7 +1167,7 @@
 	// KEYCLICK
 	
 	Behaviors.keyClick = function () {
-	  SFX.keyDown(Behaviors.SFX);
+	  SFX.keyDown(Behaviors.el);
 	
 	  var type = this.getAttribute('key-type');
 	  var value = this.getAttribute('key-value');
@@ -1177,6 +1200,9 @@
 	// KEYDOWN
 	
 	Behaviors.keyDown = function () {
+	  if (Behaviors.el._transitioning) {
+	    return;
+	  }
 	  this.object3D.position.z = 0.003;
 	  if (this.getAttribute('key-type') === 'spacebar') {
 	    this.setAttribute('color', Config.SPACEBAR_COLOR_ACTIVE);
@@ -1195,7 +1221,7 @@
 	  if (this.object3D.children[2] && this.object3D.children[2].material && !this.object3D.children[2].material.opacity) {
 	    return;
 	  }
-	  SFX.keyIn(Behaviors.SFX);
+	  SFX.keyIn(Behaviors.el);
 	  if (this.getAttribute('key-type') === 'spacebar') {
 	    this.setAttribute('color', Config.SPACEBAR_COLOR_HIGHLIGHT);
 	  } else {
@@ -1289,7 +1315,7 @@
 	module.exports = Behaviors;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1298,23 +1324,35 @@
 	
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeKeyboardKeyInSound');
+	    el.setAttribute('sfx', true);
+	    el.setAttribute('src', '#aframeKeyboardKeyIn');
+	    el.setAttribute('position', '0 2 5');
+	    parent.appendChild(el);
+	
+	    el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeKeyboardKeyDownSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeKeyboardKeyDown');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
 	  },
 	
-	  keyIn: function keyIn(el) {
+	  keyIn: function keyIn(parent) {
+	    var el = parent.querySelector('[key=aframeKeyboardKeyInSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeKeyboardKeyIn").currentTime = 0;
-	    el.setAttribute('src', '#aframeKeyboardKeyIn');
 	    el.components.sound.playSound();
 	  },
 	
-	  keyDown: function keyDown(el) {
+	  keyDown: function keyDown(parent) {
+	    var el = parent.querySelector('[key=aframeKeyboardKeyDownSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeKeyboardKeyDown").currentTime = 0;
-	    el.setAttribute('src', '#aframeKeyboardKeyDown');
 	    el.components.sound.playSound();
 	  }
 	};
@@ -1322,7 +1360,7 @@
 	module.exports = SFX;
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1386,16 +1424,14 @@
 	    this.el.appendString = this.appendString.bind(this);
 	    this.el.deleteLast = this.deleteLast.bind(this);
 	
-	    setTimeout(function () {
-	      that.updateText();
-	    }, 0);
+	    //setTimeout(function() { that.updateText(); }, 0);
 	    this.blink();
 	
 	    this.el.addEventListener('click', function () {
 	      if (this.components.input.data.disabled) {
 	        return;
 	      }
-	      that.el.focus();
+	      that.focus();
 	    });
 	
 	    Object.defineProperty(this.el, 'value', {
@@ -1526,9 +1562,13 @@
 	    if (this.data.lineHeight.length) {
 	      props.lineHeight = this.data.lineHeight;
 	    }
+	    this.text.setAttribute('visible', false);
 	    this.text.setAttribute("text", props);
 	
-	    function getTextWidth(el, trimFirst, _widthFactor) {
+	    function getTextWidth(el, data, trimFirst, _widthFactor) {
+	      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) {
+	        return 0;
+	      }
 	      var v = el.object3D.children[0].geometry.visibleGlyphs;
 	      if (!v) {
 	        return 0;
@@ -1539,42 +1579,30 @@
 	      }
 	      if (v.line) {
 	        if (trimFirst) {
-	          props.value = props.value.substr(1);
+	          data.value = data.value.substr(1);
 	        } else {
-	          props.value = props.value.slice(0, -1);
+	          data.value = data.value.slice(0, -1);
 	        }
-	        el.setAttribute("text", props);
-	        return getTextWidth(el, trimFirst);
+	        el.setAttribute("text", data);
+	        return getTextWidth(el, data, trimFirst);
 	      } else {
 	        if (!_widthFactor) {
-	          _widthFactor = Utils.getWidthFactor(el, props.wrapCount);
+	          _widthFactor = Utils.getWidthFactor(el, data.wrapCount);
 	        }
 	        v = (v.position[0] + v.data.width) / (_widthFactor / that.data.width);
 	        var textRatio = (v + padding.left + padding.right) / that.data.width;
+	
 	        if (textRatio > 1) {
 	          if (trimFirst) {
-	            props.value = props.value.substr(1);
+	            data.value = data.value.substr(1);
 	          } else {
-	            props.value = props.value.slice(0, -1);
+	            data.value = data.value.slice(0, -1);
 	          }
-	          el.setAttribute("text", props);
-	          return getTextWidth(el, trimFirst, _widthFactor);
+	          el.setAttribute("text", data);
+	          return getTextWidth(el, data, trimFirst, _widthFactor);
 	        }
 	      }
 	      return v;
-	    }
-	
-	    if (this.text.object3D) {
-	      var children = this.text.object3D.children;
-	      if (children[0] && children[0].geometry && children[0].geometry.visibleGlyphs) {
-	        var v = 0;
-	        if (children[0].geometry.visibleGlyphs.length) {
-	          v = getTextWidth(this.text, true);
-	        }
-	        this.cursor.setAttribute('position', v + padding.left + ' 0 0.003');
-	      }
-	    } else {
-	      this.cursor.setAttribute('position', padding.left + ' 0 0.003');
 	    }
 	
 	    if (props.value.length) {
@@ -1583,20 +1611,36 @@
 	      this.placeholder.setAttribute('visible', true);
 	    }
 	
-	    props.value = this.data.placeholder;
-	    props.color = this.data.placeholderColor;
-	    this.placeholder.setAttribute("text", props);
+	    var placeholder_props = Utils.clone(props);
+	    placeholder_props.value = this.data.placeholder;
+	    placeholder_props.color = this.data.placeholderColor;
+	    this.placeholder.setAttribute("text", placeholder_props);
 	
 	    setTimeout(function () {
-	      getTextWidth(that.placeholder);
+	      if (that.text.object3D) {
+	        var children = that.text.object3D.children;
+	        if (children[0] && children[0].geometry && children[0].geometry.visibleGlyphs) {
+	          var v = 0;
+	          if (children[0].geometry.visibleGlyphs.length) {
+	            v = getTextWidth(that.text, props, true);
+	            that.text.setAttribute('visible', true);
+	          }
+	          that.cursor.setAttribute('position', v + padding.left + ' 0 0.003');
+	        } else {
+	          that.cursor.setAttribute('position', padding.left + ' 0 0.003');
+	        }
+	      } else {
+	        that.cursor.setAttribute('position', padding.left + ' 0 0.003');
+	      }
+	      getTextWidth(that.placeholder, placeholder_props);
 	    }, 0);
 	
 	    this.background.setAttribute('color', this.data.backgroundColor);
-	    if (this.data.backgroundOpacity) {
-	      setTimeout(function () {
+	    /*if (this.data.backgroundOpacity) {
+	      setTimeout(function() {
 	        Utils.updateOpacity(that.background, that.data.backgroundOpacity);
 	      }, 0);
-	    }
+	    }*/
 	    this.background.setAttribute('width', this.data.width);
 	    //this.background.setAttribute('position', this.data.width/2+' 0 0');
 	    this.background.setAttribute('position', '0 -0.09 0.001');
@@ -1611,7 +1655,7 @@
 	  update: function update() {
 	    var that = this;
 	    setTimeout(function () {
-	      Utils.updateOpacity(that.el, that.data.opacity);
+	      //  Utils.updateOpacity(that.el, that.data.opacity);
 	    }, 0);
 	
 	    this.updateCursor();
@@ -1653,15 +1697,15 @@
 	});
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var Assets = __webpack_require__(16);
-	var SFX = __webpack_require__(17);
+	var Assets = __webpack_require__(15);
+	var SFX = __webpack_require__(16);
 	
 	AFRAME.registerComponent('switch', {
 	  schema: {
@@ -1682,8 +1726,7 @@
 	    Utils.preloadAssets(Assets);
 	
 	    // SFX
-	    this.SFX = SFX.init();
-	    this.el.appendChild(this.SFX);
+	    SFX.init(this.el);
 	
 	    // FILL
 	    this.el.fill = document.createElement('a-rounded');
@@ -1691,12 +1734,12 @@
 	    this.el.fill.setAttribute('height', 0.16);
 	    this.el.fill.setAttribute('radius', 0.08);
 	    this.el.fill.setAttribute('side', 'double');
-	    this.el.fill.setAttribute('position', '0 0 0.001');
+	    this.el.fill.setAttribute('position', '0 0 0.01');
 	    this.el.appendChild(this.el.fill);
 	
 	    // KNOB
 	    this.el.knob = document.createElement('a-circle');
-	    this.el.knob.setAttribute('position', '0.06 0.08 0.002');
+	    this.el.knob.setAttribute('position', '0.06 0.08 0.02');
 	    this.el.knob.setAttribute('radius', 0.12);
 	    this.el.knob.setAttribute('side', 'double');
 	    this.el.appendChild(this.el.knob);
@@ -1718,9 +1761,9 @@
 	    });
 	    this.el.addEventListener('mousedown', function () {
 	      if (this.components.switch.data.disabled) {
-	        return SFX.clickDisabled(that.SFX);
+	        return SFX.clickDisabled(this);
 	      }
-	      SFX.click(that.SFX);
+	      SFX.click(this);
 	    });
 	
 	    Object.defineProperty(this.el, 'enabled', {
@@ -1736,12 +1779,12 @@
 	  },
 	  on: function on() {
 	    this.el.fill.setAttribute('color', this.data.fillColorEnabled);
-	    this.el.knob.setAttribute('position', '0.32 0.08 0.002');
+	    this.el.knob.setAttribute('position', '0.32 0.08 0.02');
 	    this.el.knob.setAttribute('color', this.data.knobColorEnabled);
 	  },
 	  off: function off() {
 	    this.el.fill.setAttribute('color', this.data.fillColor);
-	    this.el.knob.setAttribute('position', '0.06 0.08 0.002');
+	    this.el.knob.setAttribute('position', '0.06 0.08 0.02');
 	    this.el.knob.setAttribute('color', this.data.knobColor);
 	  },
 	  disable: function disable() {
@@ -1782,7 +1825,7 @@
 	});
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1790,7 +1833,7 @@
 	module.exports = [{ type: 'img', id: 'aframeSwitchShadow', src: AFRAME.ASSETS_PATH + '/images/SwitchShadow.png' }, { type: 'audio', id: 'aframeSwitchClick', src: AFRAME.ASSETS_PATH + '/sounds/InputClick.mp3' }, { type: 'audio', id: 'aframeSwitchClickDisabled', src: AFRAME.ASSETS_PATH + '/sounds/ButtonClickDisabled.mp3' }];
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1799,23 +1842,35 @@
 	
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeSwitchClickSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeSwitchClick');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
+	
+	    el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeSwitchClickDisabledSound');
+	    el.setAttribute('sfx', true);
+	    el.setAttribute('src', '#aframeSwitchClickDisabled');
+	    el.setAttribute('position', '0 2 5');
+	    parent.appendChild(el);
 	  },
 	
-	  click: function click(el) {
+	  click: function click(parent) {
+	    var el = parent.querySelector('[key=aframeSwitchClickSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeSwitchClick").currentTime = 0;
-	    el.setAttribute('src', '#aframeSwitchClick');
 	    el.components.sound.playSound();
 	  },
 	
-	  clickDisabled: function clickDisabled(el) {
+	  clickDisabled: function clickDisabled(parent) {
+	    var el = parent.querySelector('[key=aframeSwitchClickDisabledSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeSwitchClickDisabled").currentTime = 0;
-	    el.setAttribute('src', '#aframeSwitchClickDisabled');
 	    el.components.sound.playSound();
 	  }
 	};
@@ -1823,7 +1878,7 @@
 	module.exports = SFX;
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1849,15 +1904,15 @@
 	});
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var Assets = __webpack_require__(20);
-	var SFX = __webpack_require__(21);
+	var Assets = __webpack_require__(19);
+	var SFX = __webpack_require__(20);
 	
 	AFRAME.registerComponent('radio', {
 	  schema: {
@@ -1882,8 +1937,7 @@
 	    Utils.preloadAssets(Assets);
 	
 	    // SFX
-	    this.SFX = SFX.init();
-	    this.el.appendChild(this.SFX);
+	    SFX.init(this.el);
 	
 	    // HITBOX
 	    this.hitbox = document.createElement('a-plane');
@@ -1919,9 +1973,9 @@
 	    });
 	    this.el.addEventListener('mousedown', function () {
 	      if (this.components.radio.data.disabled) {
-	        return SFX.clickDisabled(that.SFX);
+	        return SFX.clickDisabled(this);
 	      }
-	      SFX.click(that.SFX);
+	      SFX.click(this);
 	    });
 	
 	    Object.defineProperty(this.el, 'value', {
@@ -2038,6 +2092,9 @@
 	
 	    // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
 	    function getTextWidth(el, _widthFactor) {
+	      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) {
+	        return 0;
+	      }
 	      var v = el.object3D.children[0].geometry.visibleGlyphs;
 	      if (!v) {
 	        return 0;
@@ -2069,13 +2126,23 @@
 	        getTextWidth(that.label);
 	      }
 	      if (that.data.disabled) {
-	        Utils.updateOpacity(that.outline, 0.4);
-	        Utils.updateOpacity(that.circle, 0.4);
-	        Utils.updateOpacity(that.label, 0.4);
+	        var timer = setInterval(function () {
+	          if (that.outline.object3D.children[0]) {
+	            clearInterval(timer);
+	            Utils.updateOpacity(that.outline, 0.4);
+	            Utils.updateOpacity(that.circle, 0.4);
+	            Utils.updateOpacity(that.label, 0.4);
+	          }
+	        }, 10);
 	      } else {
-	        Utils.updateOpacity(that.outline, 1);
-	        Utils.updateOpacity(that.circle, 1);
-	        Utils.updateOpacity(that.label, 1);
+	        var _timer = setInterval(function () {
+	          if (that.outline.object3D.children[0]) {
+	            clearInterval(_timer);
+	            Utils.updateOpacity(that.outline, 1);
+	            Utils.updateOpacity(that.circle, 1);
+	            Utils.updateOpacity(that.label, 1);
+	          }
+	        }, 10);
 	      }
 	    }, 0);
 	  },
@@ -2108,7 +2175,7 @@
 	});
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2116,7 +2183,7 @@
 	module.exports = [{ type: 'audio', id: 'aframeRadioClick', src: AFRAME.ASSETS_PATH + '/sounds/InputClick.mp3' }, { type: 'audio', id: 'aframeRadioClickDisabled', src: AFRAME.ASSETS_PATH + '/sounds/ButtonClickDisabled.mp3' }];
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2125,23 +2192,35 @@
 	
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeRadioClickSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeRadioClick');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
+	
+	    el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeRadioClickDisabledSound');
+	    el.setAttribute('sfx', true);
+	    el.setAttribute('src', '#aframeRadioClickDisabled');
+	    el.setAttribute('position', '0 2 5');
+	    parent.appendChild(el);
 	  },
 	
-	  click: function click(el) {
+	  click: function click(parent) {
+	    var el = parent.querySelector('[key=aframeRadioClickSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeRadioClick").currentTime = 0;
-	    el.setAttribute('src', '#aframeRadioClick');
 	    el.components.sound.playSound();
 	  },
 	
-	  clickDisabled: function clickDisabled(el) {
+	  clickDisabled: function clickDisabled(parent) {
+	    var el = parent.querySelector('[key=aframeRadioClickDisabledSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeRadioClickDisabled").currentTime = 0;
-	    el.setAttribute('src', '#aframeRadioClickDisabled');
 	    el.components.sound.playSound();
 	  }
 	};
@@ -2149,15 +2228,15 @@
 	module.exports = SFX;
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var Assets = __webpack_require__(23);
-	var SFX = __webpack_require__(24);
+	var Assets = __webpack_require__(22);
+	var SFX = __webpack_require__(23);
 	
 	AFRAME.registerComponent('checkbox', {
 	  schema: {
@@ -2182,8 +2261,7 @@
 	    Utils.preloadAssets(Assets);
 	
 	    // SFX
-	    this.SFX = SFX.init();
-	    this.el.appendChild(this.SFX);
+	    SFX.init(this.el);
 	
 	    // HITBOX
 	    this.hitbox = document.createElement('a-plane');
@@ -2196,7 +2274,7 @@
 	    this.outline.setAttribute('width', 0.2);
 	    this.outline.setAttribute('height', 0.2);
 	    this.outline.setAttribute('radius', 0.02);
-	    this.outline.setAttribute('position', '0 -' + 0.2 / 2 + ' 0.001');
+	    this.outline.setAttribute('position', '0 -' + 0.2 / 2 + ' 0.01');
 	    this.el.appendChild(this.outline);
 	
 	    // INSIDE
@@ -2205,7 +2283,7 @@
 	    this.inside.setAttribute('height', 0.156);
 	    this.inside.setAttribute('radius', 0.01);
 	    this.inside.setAttribute('color', "#EEE");
-	    this.inside.setAttribute('position', 0.156 / 8 + ' -' + 0.156 / 2 + ' 0.002');
+	    this.inside.setAttribute('position', 0.156 / 8 + ' -' + 0.156 / 2 + ' 0.02');
 	    this.el.appendChild(this.inside);
 	
 	    // CHECKMARK
@@ -2213,7 +2291,7 @@
 	    this.checkmark.setAttribute('width', 0.16);
 	    this.checkmark.setAttribute('height', 0.16);
 	    this.checkmark.setAttribute('src', "#aframeCheckboxMark");
-	    this.checkmark.setAttribute('position', '0.1 0 0.003');
+	    this.checkmark.setAttribute('position', '0.1 0 0.03');
 	    this.el.appendChild(this.checkmark);
 	
 	    // LABEL
@@ -2230,9 +2308,9 @@
 	    });
 	    this.el.addEventListener('mousedown', function () {
 	      if (this.components.checkbox.data.disabled) {
-	        return SFX.clickDisabled(that.SFX);
+	        return SFX.clickDisabled(this);
 	      }
-	      SFX.click(that.SFX);
+	      SFX.click(this);
 	    });
 	
 	    Object.defineProperty(this.el, 'value', {
@@ -2282,7 +2360,7 @@
 	
 	    // HITBOX
 	    this.hitbox.setAttribute('width', this.data.width);
-	    this.hitbox.setAttribute('position', this.data.width / 2 + ' 0 0.001');
+	    this.hitbox.setAttribute('position', this.data.width / 2 + ' 0 0.01');
 	
 	    var props = {
 	      color: this.data.color,
@@ -2298,10 +2376,13 @@
 	    props.value = this.data.label;
 	    props.color = this.data.color;
 	    this.label.setAttribute('text', props);
-	    this.label.setAttribute('position', this.data.width / 2 + 0.24 + ' 0 0.001');
+	    this.label.setAttribute('position', this.data.width / 2 + 0.24 + ' 0 0.01');
 	
 	    // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
 	    function getTextWidth(el, _widthFactor) {
+	      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) {
+	        return 0;
+	      }
 	      var v = el.object3D.children[0].geometry.visibleGlyphs;
 	      if (!v) {
 	        return 0;
@@ -2333,11 +2414,21 @@
 	        getTextWidth(that.label);
 	      }
 	      if (that.data.disabled) {
-	        Utils.updateOpacity(that.checkmark, 0.4);
-	        Utils.updateOpacity(that.label, 0.4);
+	        var timer = setInterval(function () {
+	          if (that.checkmark.object3D.children[0]) {
+	            clearInterval(timer);
+	            Utils.updateOpacity(that.checkmark, 0.4);
+	            Utils.updateOpacity(that.label, 0.4);
+	          }
+	        }, 10);
 	      } else {
-	        Utils.updateOpacity(that.checkmark, 1);
-	        Utils.updateOpacity(that.label, 1);
+	        var _timer = setInterval(function () {
+	          if (that.checkmark.object3D.children[0]) {
+	            clearInterval(_timer);
+	            Utils.updateOpacity(that.checkmark, 1);
+	            Utils.updateOpacity(that.label, 1);
+	          }
+	        }, 10);
 	      }
 	    }, 0);
 	  },
@@ -2370,7 +2461,7 @@
 	});
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2378,7 +2469,7 @@
 	module.exports = [{ type: 'img', id: 'aframeCheckboxMark', src: AFRAME.ASSETS_PATH + '/images/CheckmarkIcon.png' }, { type: 'audio', id: 'aframeCheckboxClick', src: AFRAME.ASSETS_PATH + '/sounds/InputClick.mp3' }, { type: 'audio', id: 'aframeCheckboxClickDisabled', src: AFRAME.ASSETS_PATH + '/sounds/ButtonClickDisabled.mp3' }];
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2387,23 +2478,35 @@
 	
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeCheckboxClickSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeCheckboxClick');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
+	
+	    el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeButtonClickDisabledSound');
+	    el.setAttribute('sfx', true);
+	    el.setAttribute('src', '#aframeButtonClickDisabled');
+	    el.setAttribute('position', '0 2 5');
+	    parent.appendChild(el);
 	  },
 	
-	  click: function click(el) {
+	  click: function click(parent) {
+	    var el = parent.querySelector('[key=aframeCheckboxClickSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeCheckboxClick").currentTime = 0;
-	    el.setAttribute('src', '#aframeCheckboxClick');
 	    el.components.sound.playSound();
 	  },
 	
-	  clickDisabled: function clickDisabled(el) {
+	  clickDisabled: function clickDisabled(parent) {
+	    var el = parent.querySelector('[key=aframeButtonClickDisabledSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeButtonClickDisabled").currentTime = 0;
-	    el.setAttribute('src', '#aframeCheckboxClickDisabled');
 	    el.components.sound.playSound();
 	  }
 	};
@@ -2411,15 +2514,15 @@
 	module.exports = SFX;
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var Assets = __webpack_require__(26);
-	var SFX = __webpack_require__(27);
+	var Assets = __webpack_require__(25);
+	var SFX = __webpack_require__(26);
 	
 	AFRAME.registerComponent('button', {
 	  schema: {
@@ -2442,11 +2545,10 @@
 	    Utils.preloadAssets(Assets);
 	
 	    // SFX
-	    this.SFX = SFX.init();
-	    this.el.appendChild(this.SFX);
+	    SFX.init(this.el);
 	
 	    this.wrapper = document.createElement('a-entity');
-	    this.wrapper.setAttribute('position', '0 0 0.001');
+	    this.wrapper.setAttribute('position', '0 0 0.01');
 	    this.el.appendChild(this.wrapper);
 	
 	    this.shadow = document.createElement('a-image');
@@ -2458,7 +2560,7 @@
 	    this.outline = document.createElement('a-rounded');
 	    this.outline.setAttribute('height', 0.36);
 	    this.outline.setAttribute('radius', 0.03);
-	    this.outline.setAttribute('position', '0 -' + 0.36 / 2 + ' 0.001');
+	    this.outline.setAttribute('position', '0 -' + 0.36 / 2 + ' 0.01');
 	    this.wrapper.appendChild(this.outline);
 	
 	    // LABEL
@@ -2467,20 +2569,20 @@
 	
 	    // EVENTS
 	    this.el.addEventListener('click', function () {
-	      if (this.components.button.data.disabled) {
+	      if (this.components.button && this.components.button.data.disabled) {
 	        return;
 	      }
 	      that.onClick();
 	    });
 	    this.el.addEventListener('mousedown', function () {
-	      if (this.components.button.data.disabled) {
-	        return SFX.clickDisabled(that.SFX);
+	      if (this.components.button && this.components.button.data.disabled) {
+	        return SFX.clickDisabled(this);
 	      }
 	      that.wrapper.setAttribute('position', '0 0 0.036');
-	      SFX.click(that.SFX);
+	      SFX.click(this);
 	    });
 	    this.el.addEventListener('mouseup', function () {
-	      if (this.components.button.data.disabled) {
+	      if (this.components.button && this.components.button.data.disabled) {
 	        return;
 	      }
 	      that.wrapper.setAttribute('position', '0 0 0');
@@ -2525,22 +2627,29 @@
 	    // TITLE
 	    props.value = this.data.value.toUpperCase();
 	    this.label.setAttribute('text', props);
-	    this.label.setAttribute('position', this.data.width / 2 + 0.24 + ' 0 0.001');
+	    this.label.setAttribute('position', this.data.width / 2 + 0.24 + ' 0 0.01');
 	
 	    // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
-	    function getTextWidth(el, _widthFactor) {
+	    function getTextWidth(el, callback, _widthFactor) {
+	      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) {
+	        return setTimeout(function () {
+	          getTextWidth(el, callback);
+	        }, 10);
+	      }
 	      var v = el.object3D.children[0].geometry.visibleGlyphs;
 	      if (!v) {
-	        return 0;
+	        return setTimeout(function () {
+	          getTextWidth(el, callback);
+	        }, 10);
 	      }
 	      v = v[v.length - 1];
 	      if (!v) {
-	        return 0;
+	        return callback(0);
 	      }
 	      if (v.line) {
 	        props.value = props.value.slice(0, -1);
 	        el.setAttribute("text", props);
-	        return getTextWidth(el);
+	        return getTextWidth(el, callback);
 	      } else {
 	        if (!_widthFactor) {
 	          _widthFactor = Utils.getWidthFactor(el, props.wrapCount);
@@ -2550,34 +2659,52 @@
 	        if (textRatio > 1) {
 	          props.value = props.value.slice(0, -1);
 	          el.setAttribute("text", props);
-	          return getTextWidth(el, _widthFactor);
+	          return getTextWidth(el, callback, _widthFactor);
 	        }
 	      }
-	      return v;
+	      return callback(v);
 	    }
 	    setTimeout(function () {
 	      if (that.data.value.length) {
-	        var width = getTextWidth(that.label);
-	        that.label.setAttribute('position', width / 2 + 0.28 / 2 + ' ' + 0.36 / 2 + ' 0.002'); //
-	        width = width + 0.28;
-	        that.outline.setAttribute('width', width);
-	        that.__width = width;
-	        that.shadow.setAttribute('width', width * 1.17);
-	        that.shadow.setAttribute('position', width / 2 + ' 0 0');
-	        Event.emit(that.el, 'change:width', width);
+	        getTextWidth(that.label, function (width) {
+	          that.label.setAttribute('position', width / 2 + 0.28 / 2 + ' ' + 0.36 / 2 + ' 0.02'); //
+	          width = width + 0.28;
+	          that.outline.setAttribute('width', width);
+	          that.__width = width;
+	          that.shadow.setAttribute('width', width * 1.17);
+	          that.shadow.setAttribute('position', width / 2 + ' 0 0');
+	          Event.emit(that.el, 'change:width', width);
+	        });
 	      }
 	
 	      if (that.data.disabled) {
 	        that.shadow.setAttribute('visible', false);
-	        Utils.updateOpacity(that.el, 0.4);
+	        var timer = setInterval(function () {
+	          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+	            clearInterval(timer);
+	            Utils.updateOpacity(that.el, 0.4);
+	          }
+	        }, 10);
 	      } else {
-	        that.shadow.setAttribute('visible', true);
-	        Utils.updateOpacity(that.el, 1);
+	        var _timer = setInterval(function () {
+	          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+	            clearInterval(_timer);
+	            Utils.updateOpacity(that.el, 1);
+	          }
+	        }, 10);
 	      }
 	
 	      if (that.data.type === "flat") {
 	        that.shadow.setAttribute('visible', false);
-	        Utils.updateOpacity(that.outline, 0);
+	        var _timer2 = setInterval(function () {
+	          if (that.label.object3D.children[0] && that.label.object3D.children[0].geometry.visibleGlyphs) {
+	            clearInterval(_timer2);
+	            Utils.updateOpacity(that.outline, 0);
+	            if (that.data.disabled) {
+	              Utils.updateOpacity(that.label, 0.4);
+	            }
+	          }
+	        }, 10);
 	      }
 	    }, 0);
 	  },
@@ -2607,7 +2734,7 @@
 	});
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2615,7 +2742,7 @@
 	module.exports = [{ type: 'img', id: 'aframeButtonShadow', src: AFRAME.ASSETS_PATH + '/images/ButtonShadow.png' }, { type: 'audio', id: 'aframeButtonClick', src: AFRAME.ASSETS_PATH + '/sounds/ButtonClick.mp3' }, { type: 'audio', id: 'aframeButtonClickDisabled', src: AFRAME.ASSETS_PATH + '/sounds/ButtonClickDisabled.mp3' }];
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2624,23 +2751,35 @@
 	
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeButtonClickSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeButtonClick');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
+	
+	    el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeButtonClickDisabledSound');
+	    el.setAttribute('sfx', true);
+	    el.setAttribute('src', '#aframeButtonClickDisabled');
+	    el.setAttribute('position', '0 2 5');
+	    parent.appendChild(el);
 	  },
 	
-	  click: function click(el) {
+	  click: function click(parent) {
+	    var el = parent.querySelector('[key=aframeButtonClickSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeButtonClick").currentTime = 0;
-	    el.setAttribute('src', '#aframeButtonClick');
 	    el.components.sound.playSound();
 	  },
 	
-	  clickDisabled: function clickDisabled(el) {
+	  clickDisabled: function clickDisabled(parent) {
+	    var el = parent.querySelector('[key=aframeButtonClickDisabledSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeButtonClickDisabled").currentTime = 0;
-	    el.setAttribute('src', '#aframeButtonClickDisabled');
 	    el.components.sound.playSound();
 	  }
 	};
@@ -2648,15 +2787,15 @@
 	module.exports = SFX;
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var Utils = __webpack_require__(6);
 	var Event = __webpack_require__(4);
-	var Assets = __webpack_require__(29);
-	var SFX = __webpack_require__(30);
+	var Assets = __webpack_require__(28);
+	var SFX = __webpack_require__(29);
 	
 	AFRAME.registerComponent('toast', {
 	  schema: {
@@ -2668,7 +2807,9 @@
 	    font: { type: "string", default: "" },
 	    letterSpacing: { type: "int", default: 0 },
 	    lineHeight: { type: "string", default: "" },
-	    width: { type: "number", default: 3 }
+	    width: { type: "number", default: 3 },
+	    duration: { type: 'number', default: 2000 },
+	    autoshow: { type: 'boolean', default: true }
 	  },
 	  init: function init() {
 	    var that = this;
@@ -2677,12 +2818,12 @@
 	    Utils.preloadAssets(Assets);
 	
 	    // SFX
-	    this.SFX = SFX.init();
-	    this.el.appendChild(this.SFX);
+	    SFX.init(this.el);
 	
 	    // CONFIG
 	    this.el.setAttribute("position", '10000 10000 10000');
 	    this.el.setAttribute("rotation", "-25 0 0");
+	    this.el.setAttribute("scale", "0.3 0.3 0.3");
 	
 	    // OUTLINE
 	    this.background = document.createElement('a-rounded');
@@ -2698,7 +2839,6 @@
 	    // LABEL
 	    this.action = document.createElement('a-button');
 	    that.action.setAttribute('button-color', '#222');
-	
 	    this.el.appendChild(this.action);
 	
 	    function changeWidth(e) {
@@ -2712,19 +2852,34 @@
 	    }
 	    this.action.addEventListener('change:width', changeWidth);
 	    this.action.addEventListener('click', function () {
-	      //that.hide();
+	      Event.emit(that.el, 'actionclick');
 	    });
 	
-	    setTimeout(function () {
-	      Utils.updateOpacity(that.el, 0);
-	      Utils.updateOpacity(that.label, 0);
-	      Utils.updateOpacity(that.action, 0);
-	      that.el.setAttribute("position", -that.data.width / 2 + ' 0.25 -2.6');
-	      that.show();
-	    }, 1000);
+	    var timer = setInterval(function () {
+	      if (that.action.object3D && that.action.object3D.children[0]) {
+	        clearInterval(timer);
+	        Utils.updateOpacity(that.el, 0);
+	        Utils.updateOpacity(that.label, 0);
+	        Utils.updateOpacity(that.action, 0);
+	        if (that.data.autoshow) {
+	          that.show();
+	        }
+	      }
+	    }, 10);
+	
+	    // METHDOS
+	    this.el.show = this.show.bind(this);
+	    this.el.hide = this.hide.bind(this);
 	  },
 	  show: function show() {
+	    if (this.hideTimer) {
+	      clearTimeout(this.hideTimer);
+	    }
+	    this.el.setAttribute("position", -this.data.width / (2 / this.el.object3D.scale.x) + ' 0.25 -1.6');
 	    var that = this;
+	    /*if (!this.el.parentNode && this.el._parentNode) {
+	      this.el._parentNode.appendChild(this.el);
+	    }*/
 	    setTimeout(function () {
 	      that.el.setAttribute('fadein', { duration: 160 });
 	      setTimeout(function () {
@@ -2732,11 +2887,11 @@
 	        that.action.components.button.shadow.setAttribute('visible', false);
 	      }, 10);
 	    }, 0);
-	    setTimeout(function () {
+	    this.hideTimer = setTimeout(function () {
 	      that.hide();
-	    }, 2000);
+	    }, this.data.duration);
 	
-	    SFX.show(this.SFX);
+	    SFX.show(this.el);
 	  },
 	  hide: function hide() {
 	    var that = this;
@@ -2746,15 +2901,14 @@
 	      setTimeout(function () {
 	        that.el.setAttribute('fadeout', { duration: 160 });
 	        setTimeout(function () {
-	          if (that.el.parentNode) {
+	          /*if (that.el.parentNode) {
+	            that.el._parentNode = that.el.parentNode;
 	            that.el.parentNode.removeChild(that.el);
-	          }
+	          }*/
+	          that.el.setAttribute("position", '10000 10000 10000');
 	        }, 200);
 	      }, 10);
 	    }, 0);
-	  },
-	  onClick: function onClick() {
-	    //Event.emit(this.el, 'click');
 	  },
 	  update: function update() {
 	    var that = this;
@@ -2786,41 +2940,6 @@
 	    // ACTION
 	    this.action.setAttribute('value', this.data.action.toUpperCase());
 	    this.action.setAttribute('color', this.data.actionColor);
-	
-	    /*
-	    // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
-	    function getTextWidth(el, _widthFactor) {
-	      let v = el.object3D.children[0].geometry.visibleGlyphs;
-	      if (!v) { return 0; }
-	      v = v[v.length-1];
-	      if (!v) { return 0; }
-	      if (v.line) {
-	        props.value = props.value.slice(0, -1);
-	        el.setAttribute("text", props);
-	        return getTextWidth(el);
-	      } else {
-	        if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, props.wrapCount); }
-	        v = (v.position[0] + v.data.width) / (_widthFactor/that.data.width);
-	        let textRatio = v / that.data.width;
-	        if (textRatio > 1) {
-	          props.value = props.value.slice(0, -1);
-	          el.setAttribute("text", props);
-	          return getTextWidth(el, _widthFactor);
-	        }
-	      }
-	      return v;
-	    }*/
-	    setTimeout(function () {
-	      //console.log(that.action.getWidth() )
-	      /*if (that.data.value.length) {
-	        let width = getTextWidth(that.label);
-	        that.label.setAttribute('position', width/2+0.28+' 0 0.001');
-	        width = width+0.28+0.14;
-	        that.outline.setAttribute('width', width);
-	         that.shadow.setAttribute('width', width*1.16);
-	        that.shadow.setAttribute('position', width/2+' 0 0');
-	      }*/
-	    }, 0);
 	  },
 	  tick: function tick() {},
 	  remove: function remove() {},
@@ -2841,12 +2960,14 @@
 	    font: 'toast.font',
 	    'letter-spacing': 'toast.letterSpacing',
 	    'line-height': 'toast.lineHeight',
-	    'width': 'toast.width'
+	    'width': 'toast.width',
+	    'duration': 'toast.duration',
+	    'autoshow': 'toast.autoshow'
 	  }
 	});
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2854,7 +2975,7 @@
 	module.exports = [{ type: 'audio', id: 'aframeToastShow', src: AFRAME.ASSETS_PATH + '/sounds/ToastShow.mp3' }];
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2862,16 +2983,19 @@
 	var SFX = {
 	  init: function init(parent) {
 	    var el = document.createElement('a-sound');
+	    el.setAttribute('key', 'aframeToastShowSound');
 	    el.setAttribute('sfx', true);
 	    el.setAttribute('src', '#aframeToastShow');
 	    el.setAttribute('position', '0 2 5');
-	    return el;
+	    parent.appendChild(el);
 	  },
 	
-	  show: function show(el) {
+	  show: function show(parent) {
+	    var el = parent.querySelector('[key=aframeToastShowSound]');
+	    if (!el) {
+	      return;
+	    }
 	    el.components.sound.stopSound();
-	    document.getElementById("aframeToastShow").currentTime = 0;
-	    el.setAttribute('src', '#aframeToastShow');
 	    el.components.sound.playSound();
 	  }
 	};

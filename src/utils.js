@@ -46,11 +46,33 @@ Utils.extend = function(a, b) {
 };
 
 
+Utils.clone = function(original) {
+	if (Array.isArray(original)) {
+		return original.slice(0);
+	}
+
+	// First create an empty object with
+	// same prototype of our original source
+	const clone = Object.create(Object.getPrototypeOf(original));
+	let i = undefined;
+	const keys = Object.getOwnPropertyNames(original);
+	i = 0;
+	while (i < keys.length) {
+		// copy each property into the clone
+		Object.defineProperty(clone, keys[i], Object.getOwnPropertyDescriptor(original, keys[i]));
+		i++;
+	}
+	return clone;
+};
+
+
 Utils.updateOpacity = function(el, opacity) {
   if (el.hasAttribute('text')) {
     let props = el.getAttribute('text');
-    props.opacity = opacity;
-    el.setAttribute('text', props);
+    if (props) {
+      props.opacity = opacity;
+      el.setAttribute('text', props);
+    }
   }
   el.object3D.traverse(function (o) {
     if (o.material) {

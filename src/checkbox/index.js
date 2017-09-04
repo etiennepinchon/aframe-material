@@ -26,8 +26,7 @@ AFRAME.registerComponent('checkbox', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.SFX = SFX.init();
-    this.el.appendChild( this.SFX );
+    SFX.init(this.el);
 
     // HITBOX
     this.hitbox = document.createElement('a-plane');
@@ -40,7 +39,7 @@ AFRAME.registerComponent('checkbox', {
     this.outline.setAttribute('width', 0.2);
     this.outline.setAttribute('height', 0.2);
     this.outline.setAttribute('radius', 0.02);
-    this.outline.setAttribute('position', `0 -${0.2/2} 0.001`);
+    this.outline.setAttribute('position', `0 -${0.2/2} 0.01`);
     this.el.appendChild(this.outline);
 
     // INSIDE
@@ -49,7 +48,7 @@ AFRAME.registerComponent('checkbox', {
     this.inside.setAttribute('height', 0.156);
     this.inside.setAttribute('radius', 0.01);
     this.inside.setAttribute('color', "#EEE");
-    this.inside.setAttribute('position', `${0.156/8} -${0.156/2} 0.002`);
+    this.inside.setAttribute('position', `${0.156/8} -${0.156/2} 0.02`);
     this.el.appendChild(this.inside);
 
     // CHECKMARK
@@ -57,7 +56,7 @@ AFRAME.registerComponent('checkbox', {
     this.checkmark.setAttribute('width', 0.16);
     this.checkmark.setAttribute('height', 0.16);
     this.checkmark.setAttribute('src', "#aframeCheckboxMark");
-    this.checkmark.setAttribute('position', '0.1 0 0.003');
+    this.checkmark.setAttribute('position', '0.1 0 0.03');
     this.el.appendChild(this.checkmark);
 
     // LABEL
@@ -72,9 +71,9 @@ AFRAME.registerComponent('checkbox', {
     });
     this.el.addEventListener('mousedown', function() {
       if (this.components.checkbox.data.disabled) {
-        return SFX.clickDisabled(that.SFX);
+        return SFX.clickDisabled(this);
       }
-      SFX.click(that.SFX);
+      SFX.click(this);
     });
 
     Object.defineProperty(this.el, 'value', {
@@ -114,7 +113,7 @@ AFRAME.registerComponent('checkbox', {
 
     // HITBOX
     this.hitbox.setAttribute('width', this.data.width)
-    this.hitbox.setAttribute('position', this.data.width/2+' 0 0.001');
+    this.hitbox.setAttribute('position', this.data.width/2+' 0 0.01');
 
     let props = {
       color: this.data.color,
@@ -128,10 +127,11 @@ AFRAME.registerComponent('checkbox', {
     props.value = this.data.label;
     props.color = this.data.color;
     this.label.setAttribute('text', props);
-    this.label.setAttribute('position', this.data.width/2+0.24+' 0 0.001');
+    this.label.setAttribute('position', this.data.width/2+0.24+' 0 0.01');
 
     // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
     function getTextWidth(el, _widthFactor) {
+      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) { return 0; }
       let v = el.object3D.children[0].geometry.visibleGlyphs;
       if (!v) { return 0; }
       v = v[v.length-1];
@@ -157,11 +157,21 @@ AFRAME.registerComponent('checkbox', {
         getTextWidth(that.label);
       }
       if (that.data.disabled) {
-        Utils.updateOpacity(that.checkmark, 0.4);
-        Utils.updateOpacity(that.label, 0.4);
+        let timer = setInterval(function() {
+          if (that.checkmark.object3D.children[0]) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.checkmark, 0.4);
+            Utils.updateOpacity(that.label, 0.4);
+          }
+        }, 10)
       } else {
-        Utils.updateOpacity(that.checkmark, 1);
-        Utils.updateOpacity(that.label, 1);
+        let timer = setInterval(function() {
+          if (that.checkmark.object3D.children[0]) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.checkmark, 1);
+            Utils.updateOpacity(that.label, 1);
+          }
+        }, 10)
       }
     }, 0);
   },

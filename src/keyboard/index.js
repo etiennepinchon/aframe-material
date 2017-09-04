@@ -14,8 +14,7 @@ AFRAME.registerComponent('keyboard', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.el.SFX = SFX.init();
-    this.el.appendChild( this.el.SFX );
+    SFX.init(this.el);
 
     // Draw
     Draw.init( this.el );
@@ -42,9 +41,9 @@ AFRAME.registerComponent('keyboard', {
     this.el.dismiss = function() { Behaviors.dismissKeyboard(that.el); }
     this.el.destroy = function() { Behaviors.destroyKeyboard(that.el); }
 
-    this.el.setAttribute("scale", "5 5 5");
+    this.el.setAttribute("scale", "2 2 2");
     this.el.setAttribute("rotation", "-20 0 0");
-    this.el.setAttribute("position", "-3.65 -0.8 -4");
+    this.el.setAttribute("position", "-1.5 -0.3 -2");
 
     let that = this;
     this.el.addEventListener('input', (e)=>{

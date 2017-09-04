@@ -19,7 +19,7 @@ Draw.numericalUI = ()=> {
   wrapper.setAttribute('position', '0.025 0 0.12');
   wrapper.setAttribute('rotation', '0 25 0');
   wrapper.setAttribute('data-ui', true);
-  
+
   var el = document.createElement('a-rounded');
   el.setAttribute('width', '0.280');
   el.setAttribute('height', '0.360');
@@ -247,7 +247,7 @@ Draw.key = (id, type, value)=> {
     var letter_el = document.createElement('a-text');
     letter_el.setAttribute('value', value);
     letter_el.setAttribute('color', '#dbddde');
-    letter_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' 0');
+    letter_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' 0.01');
     letter_el.setAttribute('scale', '0.16 0.16 0.16');
     letter_el.setAttribute('align', 'center');
     letter_el.setAttribute('baseline', 'center');
@@ -263,7 +263,7 @@ Draw.key = (id, type, value)=> {
     el.setAttribute('color', '#404b50');
     el.shadow_el.setAttribute('width', Config.SPACE_KEY_WIDTH*1.12);
     el.shadow_el.setAttribute('height', Config.SPACE_KEY_HEIGHT*1.2);
-    el.shadow_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' -0.002');
+    el.shadow_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' -0.02');
     letter_el.setAttribute('color', '#adb1b3');
     letter_el.setAttribute('scale', '0.12 0.12 0.12');
     letter_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' 0');
@@ -282,7 +282,7 @@ Draw.key = (id, type, value)=> {
   if (type === 'backspace' || type === 'enter' || type === 'dismiss') {
     el.setAttribute('width', Config.ACTION_WIDTH);
     el.shadow_el.setAttribute('width', Config.ACTION_WIDTH*1.25);
-    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.KEY_WIDTH/2+' -0.002');
+    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.KEY_WIDTH/2+' -0.02');
   }
 
   // ---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('data-type', 'icon');
     icon_el.setAttribute('width', '0.032');
     icon_el.setAttribute('height', '0.032');
-    icon_el.setAttribute('position', '0.04 0.04 0.001')
+    icon_el.setAttribute('position', '0.04 0.04 0.01')
     icon_el.setAttribute('src', '#aframeKeyboardShift');
     el.appendChild(icon_el);
     Draw.el.shiftKey = el;
@@ -306,7 +306,7 @@ Draw.key = (id, type, value)=> {
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.032');
     icon_el.setAttribute('height', '0.032');
-    icon_el.setAttribute('position', '0.04 0.04 0.001')
+    icon_el.setAttribute('position', '0.04 0.04 0.01')
     icon_el.setAttribute('src', '#aframeKeyboardGlobal');
     el.appendChild(icon_el);
   }
@@ -318,7 +318,7 @@ Draw.key = (id, type, value)=> {
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.046');
     icon_el.setAttribute('height', '0.046');
-    icon_el.setAttribute('position', '0.07 0.04 0.001')
+    icon_el.setAttribute('position', '0.07 0.04 0.01')
     icon_el.setAttribute('src', '#aframeKeyboardBackspace');
     el.appendChild(icon_el);
   }
@@ -329,18 +329,18 @@ Draw.key = (id, type, value)=> {
   else if (type === 'enter') {
     el.setAttribute('height', Config.ACTION_WIDTH);
     el.shadow_el.setAttribute('height', Config.ACTION_WIDTH*1.25);
-    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.ACTION_WIDTH/2+' -0.002');
+    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.ACTION_WIDTH/2+' -0.02');
 
     var circle_el = document.createElement('a-circle');
     circle_el.setAttribute('color', '#4285f4');
     circle_el.setAttribute('radius', 0.044);
-    circle_el.setAttribute('position', '0.07 0.07 0.001')
+    circle_el.setAttribute('position', '0.07 0.07 0.01')
     el.appendChild(circle_el);
 
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.034');
     icon_el.setAttribute('height', '0.034');
-    icon_el.setAttribute('position', '0.07 0.07 0.0011')
+    icon_el.setAttribute('position', '0.07 0.07 0.011')
     icon_el.setAttribute('src', '#aframeKeyboardEnter');
     el.appendChild(icon_el);
   }
@@ -352,7 +352,7 @@ Draw.key = (id, type, value)=> {
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.046');
     icon_el.setAttribute('height', '0.046');
-    icon_el.setAttribute('position', '0.07 0.04 0.001')
+    icon_el.setAttribute('position', '0.07 0.04 0.01')
     icon_el.setAttribute('src', '#aframeKeyboardDismiss');
     el.appendChild(icon_el);
   }

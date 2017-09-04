@@ -22,8 +22,7 @@ AFRAME.registerComponent('switch', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.SFX = SFX.init();
-    this.el.appendChild( this.SFX );
+    SFX.init(this.el);
 
     // FILL
     this.el.fill = document.createElement('a-rounded');
@@ -31,12 +30,12 @@ AFRAME.registerComponent('switch', {
     this.el.fill.setAttribute('height', 0.16)
     this.el.fill.setAttribute('radius', 0.08)
     this.el.fill.setAttribute('side', 'double')
-    this.el.fill.setAttribute('position', '0 0 0.001')
+    this.el.fill.setAttribute('position', '0 0 0.01')
     this.el.appendChild(this.el.fill);
 
     // KNOB
     this.el.knob = document.createElement('a-circle');
-    this.el.knob.setAttribute('position', '0.06 0.08 0.002')
+    this.el.knob.setAttribute('position', '0.06 0.08 0.02')
     this.el.knob.setAttribute('radius', 0.12)
     this.el.knob.setAttribute('side', 'double')
     this.el.appendChild(this.el.knob);
@@ -56,9 +55,9 @@ AFRAME.registerComponent('switch', {
     });
     this.el.addEventListener('mousedown', function() {
       if (this.components.switch.data.disabled) {
-        return SFX.clickDisabled(that.SFX);
+        return SFX.clickDisabled(this);
       }
-      SFX.click(that.SFX);
+      SFX.click(this);
     });
 
     Object.defineProperty(this.el, 'enabled', {
@@ -70,12 +69,12 @@ AFRAME.registerComponent('switch', {
   },
   on: function() {
     this.el.fill.setAttribute('color', this.data.fillColorEnabled)
-    this.el.knob.setAttribute('position', '0.32 0.08 0.002');
+    this.el.knob.setAttribute('position', '0.32 0.08 0.02');
     this.el.knob.setAttribute('color', this.data.knobColorEnabled)
   },
   off: function() {
     this.el.fill.setAttribute('color', this.data.fillColor)
-    this.el.knob.setAttribute('position', '0.06 0.08 0.002');
+    this.el.knob.setAttribute('position', '0.06 0.08 0.02');
     this.el.knob.setAttribute('color', this.data.knobColor)
   },
   disable: function() {

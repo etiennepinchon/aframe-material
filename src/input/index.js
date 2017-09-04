@@ -57,12 +57,12 @@ AFRAME.registerComponent('input', {
     this.el.appendString = this.appendString.bind(this);
     this.el.deleteLast = this.deleteLast.bind(this);
 
-    setTimeout(function() { that.updateText(); }, 0);
+    //setTimeout(function() { that.updateText(); }, 0);
     this.blink();
 
     this.el.addEventListener('click', function() {
       if (this.components.input.data.disabled) { return; }
-      that.el.focus()
+      that.focus();
     });
 
     Object.defineProperty(this.el, 'value', {
@@ -172,48 +172,41 @@ AFRAME.registerComponent('input', {
     if (this.data.font.length) { props.font = this.data.font }
     if (this.data.letterSpacing) { props.letterSpacing = this.data.letterSpacing; }
     if (this.data.lineHeight.length) { props.lineHeight = this.data.lineHeight; }
+    this.text.setAttribute('visible', false);
     this.text.setAttribute("text", props);
 
-    function getTextWidth(el, trimFirst, _widthFactor) {
+    function getTextWidth(el, data, trimFirst, _widthFactor) {
+      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) { return 0; }
       let v = el.object3D.children[0].geometry.visibleGlyphs;
       if (!v) { return 0; }
       v = v[v.length-1];
       if (!v) { return 0; }
       if (v.line) {
         if (trimFirst) {
-          props.value = props.value.substr(1);
+          data.value = data.value.substr(1);
         } else {
-          props.value = props.value.slice(0, -1);
+          data.value = data.value.slice(0, -1);
         }
-        el.setAttribute("text", props);
-        return getTextWidth(el, trimFirst);
+        el.setAttribute("text", data);
+        return getTextWidth(el, data, trimFirst);
       } else {
-        if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, props.wrapCount); }
+        if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, data.wrapCount); }
         v = (v.position[0] + v.data.width) / (_widthFactor/that.data.width);
         let textRatio = (v+padding.left+padding.right) / that.data.width;
+
         if (textRatio > 1) {
           if (trimFirst) {
-            props.value = props.value.substr(1);
+            data.value = data.value.substr(1);
           } else {
-            props.value = props.value.slice(0, -1);
+            data.value = data.value.slice(0, -1);
           }
-          el.setAttribute("text", props);
-          return getTextWidth(el, trimFirst, _widthFactor);
+          el.setAttribute("text", data);
+          return getTextWidth(el, data, trimFirst, _widthFactor);
         }
       }
       return v;
     }
 
-    if (this.text.object3D) {
-      let children = this.text.object3D.children;
-      if (children[0] && children[0].geometry && children[0].geometry.visibleGlyphs) {
-        let v = 0;
-        if (children[0].geometry.visibleGlyphs.length) {
-          v = getTextWidth(this.text, true);
-        }
-        this.cursor.setAttribute('position', v+padding.left+' 0 0.003');
-      }
-    } else { this.cursor.setAttribute('position', padding.left+' 0 0.003'); }
 
     if (props.value.length) {
       this.placeholder.setAttribute('visible', false);
@@ -221,21 +214,34 @@ AFRAME.registerComponent('input', {
       this.placeholder.setAttribute('visible', true);
     }
 
-    props.value = this.data.placeholder;
-    props.color = this.data.placeholderColor;
-    this.placeholder.setAttribute("text", props);
+    let placeholder_props = Utils.clone(props);
+    placeholder_props.value = this.data.placeholder;
+    placeholder_props.color = this.data.placeholderColor;
+    this.placeholder.setAttribute("text", placeholder_props);
 
     setTimeout(function() {
-      getTextWidth(that.placeholder);
+      if (that.text.object3D) {
+        let children = that.text.object3D.children;
+        if (children[0] && children[0].geometry && children[0].geometry.visibleGlyphs) {
+          let v = 0;
+          if (children[0].geometry.visibleGlyphs.length) {
+            v = getTextWidth(that.text, props, true);
+            that.text.setAttribute('visible', true);
+          }
+          that.cursor.setAttribute('position', v+padding.left+' 0 0.003');
+        } else {
+          that.cursor.setAttribute('position', padding.left+' 0 0.003');
+        }
+      } else {  that.cursor.setAttribute('position', padding.left+' 0 0.003'); }
+      getTextWidth(that.placeholder, placeholder_props);
     }, 0)
 
-
     this.background.setAttribute('color', this.data.backgroundColor)
-    if (this.data.backgroundOpacity) {
+    /*if (this.data.backgroundOpacity) {
       setTimeout(function() {
         Utils.updateOpacity(that.background, that.data.backgroundOpacity);
       }, 0);
-    }
+    }*/
     this.background.setAttribute('width', this.data.width);
     //this.background.setAttribute('position', this.data.width/2+' 0 0');
     this.background.setAttribute('position', '0 -0.09 0.001');
@@ -250,7 +256,7 @@ AFRAME.registerComponent('input', {
   update: function () {
     let that = this;
     setTimeout(function() {
-      Utils.updateOpacity(that.el, that.data.opacity);
+    //  Utils.updateOpacity(that.el, that.data.opacity);
     }, 0)
 
     this.updateCursor();

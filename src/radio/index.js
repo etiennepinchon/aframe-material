@@ -26,8 +26,7 @@ AFRAME.registerComponent('radio', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.SFX = SFX.init();
-    this.el.appendChild( this.SFX );
+    SFX.init(this.el);
 
     // HITBOX
     this.hitbox = document.createElement('a-plane');
@@ -61,9 +60,9 @@ AFRAME.registerComponent('radio', {
     });
     this.el.addEventListener('mousedown', function() {
       if (this.components.radio.data.disabled) {
-        return SFX.clickDisabled(that.SFX);
+        return SFX.clickDisabled(this);
       }
-      SFX.click(that.SFX);
+      SFX.click(this);
     });
 
     Object.defineProperty(this.el, 'value', {
@@ -144,6 +143,7 @@ AFRAME.registerComponent('radio', {
 
     // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
     function getTextWidth(el, _widthFactor) {
+      if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) { return 0; }
       let v = el.object3D.children[0].geometry.visibleGlyphs;
       if (!v) { return 0; }
       v = v[v.length-1];
@@ -169,13 +169,23 @@ AFRAME.registerComponent('radio', {
         getTextWidth(that.label);
       }
       if (that.data.disabled) {
-        Utils.updateOpacity(that.outline, 0.4);
-        Utils.updateOpacity(that.circle, 0.4);
-        Utils.updateOpacity(that.label, 0.4);
+        let timer = setInterval(function() {
+          if (that.outline.object3D.children[0]) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.outline, 0.4);
+            Utils.updateOpacity(that.circle, 0.4);
+            Utils.updateOpacity(that.label, 0.4);
+          }
+        }, 10)
       } else {
-        Utils.updateOpacity(that.outline, 1);
-        Utils.updateOpacity(that.circle, 1);
-        Utils.updateOpacity(that.label, 1);
+        let timer = setInterval(function() {
+          if (that.outline.object3D.children[0]) {
+            clearInterval(timer);
+            Utils.updateOpacity(that.outline, 1);
+            Utils.updateOpacity(that.circle, 1);
+            Utils.updateOpacity(that.label, 1);
+          }
+        }, 10)
       }
     }, 0);
   },

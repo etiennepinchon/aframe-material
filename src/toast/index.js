@@ -13,7 +13,9 @@ AFRAME.registerComponent('toast', {
     font: { type: "string", default: "" },
     letterSpacing: { type: "int", default: 0 },
     lineHeight: { type: "string", default: "" },
-    width: { type: "number", default: 3 }
+    width: { type: "number", default: 3 },
+    duration: { type: 'number', default: 2000 },
+    autoshow: { type: 'boolean', default: true }
   },
   init: function () {
     var that = this;
@@ -22,12 +24,12 @@ AFRAME.registerComponent('toast', {
     Utils.preloadAssets( Assets );
 
     // SFX
-    this.SFX = SFX.init();
-    this.el.appendChild( this.SFX );
+    SFX.init(this.el);
 
     // CONFIG
     this.el.setAttribute("position", `10000 10000 10000`);
     this.el.setAttribute("rotation", "-25 0 0");
+    this.el.setAttribute("scale", "0.3 0.3 0.3");
 
     // OUTLINE
     this.background = document.createElement('a-rounded');
@@ -43,7 +45,6 @@ AFRAME.registerComponent('toast', {
     // LABEL
     this.action = document.createElement('a-button');
     that.action.setAttribute('button-color', '#222')
-
     this.el.appendChild(this.action);
 
     function changeWidth(e){
@@ -57,20 +58,32 @@ AFRAME.registerComponent('toast', {
     }
     this.action.addEventListener('change:width', changeWidth);
     this.action.addEventListener('click', function() {
-      //that.hide();
-    })
+      Event.emit(that.el, 'actionclick');
+    });
 
-    setTimeout(function() {
-      Utils.updateOpacity(that.el, 0);
-      Utils.updateOpacity(that.label, 0);
-      Utils.updateOpacity(that.action, 0);
-      that.el.setAttribute("position", `${-that.data.width/2} 0.25 -2.6`);
-      that.show();
-    }, 1000);
+    let timer = setInterval(function() {
+      if (that.action.object3D && that.action.object3D.children[0]) {
+        clearInterval(timer);
+        Utils.updateOpacity(that.el, 0);
+        Utils.updateOpacity(that.label, 0);
+        Utils.updateOpacity(that.action, 0);
+        if (that.data.autoshow) { that.show(); }
+      }
+    }, 10);
 
+    // METHDOS
+    this.el.show = this.show.bind(this);
+    this.el.hide = this.hide.bind(this);
   },
   show: function() {
+    if (this.hideTimer) {
+      clearTimeout(this.hideTimer);
+    }
+    this.el.setAttribute("position", `${-this.data.width/(2/this.el.object3D.scale.x)} 0.25 -1.6`);
     let that = this;
+    /*if (!this.el.parentNode && this.el._parentNode) {
+      this.el._parentNode.appendChild(this.el);
+    }*/
     setTimeout(function() {
       that.el.setAttribute('fadein', {duration: 160});
       setTimeout(function() {
@@ -78,11 +91,11 @@ AFRAME.registerComponent('toast', {
         that.action.components.button.shadow.setAttribute('visible', false);
       }, 10)
     }, 0)
-    setTimeout(function() {
+    this.hideTimer = setTimeout(function() {
       that.hide();
-    }, 2000);
+    }, this.data.duration);
 
-    SFX.show(this.SFX);
+    SFX.show(this.el);
   },
   hide: function() {
     let that = this;
@@ -92,15 +105,14 @@ AFRAME.registerComponent('toast', {
       setTimeout(function() {
         that.el.setAttribute('fadeout', {duration: 160});
         setTimeout(function() {
-          if (that.el.parentNode) {
+          /*if (that.el.parentNode) {
+            that.el._parentNode = that.el.parentNode;
             that.el.parentNode.removeChild(that.el);
-          }
+          }*/
+          that.el.setAttribute("position", `10000 10000 10000`);
         }, 200);
       }, 10)
     }, 0);
-  },
-  onClick: function() {
-    //Event.emit(this.el, 'click');
   },
   update: function () {
     var that = this;
@@ -130,42 +142,6 @@ AFRAME.registerComponent('toast', {
     // ACTION
     this.action.setAttribute('value', this.data.action.toUpperCase());
     this.action.setAttribute('color', this.data.actionColor);
-
-    /*
-    // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
-    function getTextWidth(el, _widthFactor) {
-      let v = el.object3D.children[0].geometry.visibleGlyphs;
-      if (!v) { return 0; }
-      v = v[v.length-1];
-      if (!v) { return 0; }
-      if (v.line) {
-        props.value = props.value.slice(0, -1);
-        el.setAttribute("text", props);
-        return getTextWidth(el);
-      } else {
-        if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, props.wrapCount); }
-        v = (v.position[0] + v.data.width) / (_widthFactor/that.data.width);
-        let textRatio = v / that.data.width;
-        if (textRatio > 1) {
-          props.value = props.value.slice(0, -1);
-          el.setAttribute("text", props);
-          return getTextWidth(el, _widthFactor);
-        }
-      }
-      return v;
-    }*/
-    setTimeout(function() {
-      //console.log(that.action.getWidth() )
-      /*if (that.data.value.length) {
-        let width = getTextWidth(that.label);
-        that.label.setAttribute('position', width/2+0.28+' 0 0.001');
-        width = width+0.28+0.14;
-        that.outline.setAttribute('width', width);
-
-        that.shadow.setAttribute('width', width*1.16);
-        that.shadow.setAttribute('position', width/2+' 0 0');
-      }*/
-    }, 0);
   },
   tick: function () {},
   remove: function () {},
@@ -186,6 +162,8 @@ AFRAME.registerPrimitive('a-toast', {
     font: 'toast.font',
     'letter-spacing': 'toast.letterSpacing',
     'line-height': 'toast.lineHeight',
-    'width': 'toast.width'
+    'width': 'toast.width',
+    'duration': 'toast.duration',
+    'autoshow': 'toast.autoshow'
   }
 });

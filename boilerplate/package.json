@@ -1,0 +1,23 @@
+{
+  "name": "aframe-material-boilerplate",
+  "description": "Boilerplate for aframe-material",
+  "version": "1.0.03",
+  "license": "MIT",
+  "repository": "etiennepinchon/aframe-rounded",
+  "scripts": {
+    "start": "budo --live --verbose --port 3000 --open"
+  },
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "budo": "^7.1.0",
+    "shelljs": "^0.6.0",
+    "webpack": "^1.12.9",
+    "ghpages": "0.0.3"
+  },
+  "keywords": [
+    "aframe",
+    "aframe-component",
+    "webvr",
+    "vr"
+  ]
+}

@@ -5,7 +5,6 @@ const SFX = require('./sfx');
 const Behaviors = {};
 
 Behaviors.el = null;
-Behaviors.SFX = null;
 
 // -----------------------------------------------------------------------------
 // KEYBOARD METHODS
@@ -110,7 +109,7 @@ Behaviors.addKeyEvents = (el)=>{
 // KEYCLICK
 
 Behaviors.keyClick = function() {
-  SFX.keyDown(Behaviors.SFX);
+  SFX.keyDown(Behaviors.el);
 
   let type = this.getAttribute('key-type');
   let value = this.getAttribute('key-value');
@@ -147,6 +146,7 @@ Behaviors.keyClick = function() {
 // KEYDOWN
 
 Behaviors.keyDown = function() {
+  if (Behaviors.el._transitioning) { return; }
   this.object3D.position.z = 0.003;
   if (this.getAttribute('key-type') === 'spacebar') {
     this.setAttribute('color', Config.SPACEBAR_COLOR_ACTIVE);
@@ -163,7 +163,7 @@ Behaviors.keyIn = function() {
   if (this.object3D.children[2] && this.object3D.children[2].material && !this.object3D.children[2].material.opacity) {
     return
   }
-  SFX.keyIn(Behaviors.SFX);
+  SFX.keyIn(Behaviors.el);
   if (this.getAttribute('key-type') === 'spacebar') {
     this.setAttribute('color', Config.SPACEBAR_COLOR_HIGHLIGHT);
   } else {
