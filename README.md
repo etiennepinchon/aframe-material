@@ -47,6 +47,10 @@ Here is the code from the demo. That is it. Pure html!
 
 ## 👉👉 Install 👈👈
 
+## Option 1:
+Download the `boilerplate` and follow the readme (super easy).
+
+## Option 2:
 Since this kit is using assets (icons and sounds) you need to download the git project and copy the `assets` folder to the location of your choice and specify the path in the head of the html page.
 
 ```html
