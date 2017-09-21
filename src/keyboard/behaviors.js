@@ -136,6 +136,7 @@ Behaviors.keyClick = function() {
   }
   else if (type === 'enter') {
     Event.emit(Behaviors.el, 'input', '\n');
+    Event.emit(Behaviors.el, 'enter', '\n');
   }
   else if (type === 'dismiss') {
     Event.emit(Behaviors.el, 'dismiss');

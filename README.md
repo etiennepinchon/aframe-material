@@ -83,6 +83,7 @@ Create a virtual keyboard that works with inputs out of the box.
 | Name | Description | Type | Default |
 | --- | --- | --- | --- |
 | is-open | Whether or not the keyboard should be open | boolean | false |
+| physical-keyboard | Whether or not the physical keyboard should be respond to key press. (Great for debugging) | boolean | false |
 
 ### Methods
 
@@ -102,6 +103,7 @@ Create a virtual keyboard that works with inputs out of the box.
 | diddismiss | Triggered when the keyboard did close. |
 | input | Triggered when a key is pressed. |
 | backspace | Triggered when the backspace key is pressed. |
+| enter | Triggered when the enter is pressed. |
 
 ### Custom example (just in case 😉)
 
@@ -112,6 +114,9 @@ keyboard.addEventListener('input', (e)=>{
   str += e.detail;
   console.log(str);
 });
+keyboard.addEventListener('enter', (e)=>{
+  console.log("Enter key pressed!")
+})
 keyboard.addEventListener('dismiss', (e)=>{
   console.log("Dismiss: ", e);
   keyboard.dismiss();
@@ -349,6 +354,15 @@ button.addEventListener('click', ()=> {
 Create a rounded rectangle, useful to create beautiful interfaces 😁.
 
 [👉 github.com/etiennepinchon/aframe-rounded](https://github.com/etiennepinchon/aframe-rounded)
+
+-----------------------------------------------
+
+## Change log
+
+### 0.1.1
+
+* Added `enter` keyboard event.
+* Added physical keyboard interaction using the `physical-keyboard` property.
 
 -----------------------------------------------
 

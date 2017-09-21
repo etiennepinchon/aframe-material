@@ -19,7 +19,7 @@
       <a-entity> <a-camera look-controls-enabled wasd-controls-enabled mouse-cursor></a-camera></a-entity>
 
       <!-- BEGIN INPUTS/KEYBOARD -->
-      <a-keyboard></a-keyboard>
+      <a-keyboard physical-keyboard="true"></a-keyboard>
       <a-input position="-0.7 1 -2.5" placeholder="Username" color="black" width="1"></a-input>
       <a-input position="-0.7 0.8 -2.5" type="password" placeholder="Password" color="black" width="1"></a-input>
       <!-- END INPUTS/KEYBOARD -->
@@ -52,10 +52,10 @@
       let toast = document.querySelector('a-toast');
       toast.addEventListener('actionclick', ()=>{
         toast.hide();
-      })
+      });
       button.addEventListener('click', ()=> {
         toast.show();
-      })
+      });
     </script>
   </body>
 </html>
