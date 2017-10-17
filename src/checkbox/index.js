@@ -66,7 +66,8 @@ AFRAME.registerComponent('checkbox', {
     // EVENTS
     this.el.addEventListener('click', function() {
       if (this.components.checkbox.data.disabled) { return; }
-      this.setAttribute('checked', !this.components.checkbox.data.checked);
+      this.components.checkbox.data.checked = !this.components.checkbox.data.checked;
+      this.setAttribute('checked', this.components.checkbox.data.checked);
       that.onClick();
     });
     this.el.addEventListener('mousedown', function() {
