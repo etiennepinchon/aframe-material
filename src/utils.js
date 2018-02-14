@@ -16,7 +16,8 @@ Utils.preloadAssets = (assets_arr)=>{
   for (let item of assets_arr) {
     already_exists = false;
 
-    for (let stuff of assets.children) {
+    /***** With Edge, assets.children is a HTMLCollection, not an Array! *****/
+    for (let stuff of Array.from(assets.children)) {
       if (item.id === stuff.id) {
         already_exists = true;
       }
