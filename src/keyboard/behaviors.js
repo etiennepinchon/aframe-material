@@ -11,7 +11,7 @@ Behaviors.el = null;
 
 Behaviors.showKeyboard = function(el) {
   if (el.o_position) {
-    el.setAttribute("position", el.o_position);
+    el.object3D.position.copy(el.o_position);
   }
   el.isOpen = true;
   for(let item of el.querySelectorAll('[data-ui]') ) {
@@ -27,7 +27,10 @@ Behaviors.showKeyboard = function(el) {
 Behaviors.hideKeyboard = function(el) {
   let position = el.getAttribute("position");
   if (position.x !== -10000) {
-    el.o_position = position;
+    if (!el.o_position) {
+      el.o_position = new THREE.Vector3();
+    }
+    el.o_position.copy(position);
   }
   el.isOpen = false;
   el.setAttribute("position", "-10000 -10000 -10000");
@@ -42,7 +45,7 @@ Behaviors.destroyKeyboard = function(el) {
 
 Behaviors.openKeyboard = function(el) {
   if (el.o_position) {
-    el.setAttribute("position", el.o_position);
+    el.object3D.position.copy(o_position);
   }
   el.isOpen = true;
   el._transitioning = true;
