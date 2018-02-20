@@ -32,6 +32,14 @@ AFRAME.registerComponent('keyboard', {
     this.el.alphabeticalLayout = Draw.alphabeticalLayout();
     this.el.symbolsLayout = Draw.symbolsLayout();
 
+    // Bind event listener scopes
+    this.inputEvent = this.inputEvent.bind(this)
+    this.backspaceEvent = this.backspaceEvent.bind(this)
+    this.dismissEvent = this.dismissEvent.bind(this)
+    this.keydownEvent = this.keydownEvent.bind(this)
+    this.didFocusInputEvent = this.didFocusInputEvent.bind(this)
+    this.didBlurInputEvent = this.didBlurInputEvent.bind(this)
+
     // Append layouts to UI
     numericalUI.appendChild( Draw.numericalLayout() );
     mainUI.appendChild( this.el.alphabeticalLayout );
@@ -54,14 +62,14 @@ AFRAME.registerComponent('keyboard', {
     this.el.setAttribute("position", "-1.5 -0.3 -2");
 
     // Register keyboard events
-    this.el.addEventListener('input', this.inputEvent.bind(this));
-    this.el.addEventListener('backspace', this.backspaceEvent.bind(this));
-    this.el.addEventListener('dismiss', this.dismissEvent.bind(this));
+    this.el.addEventListener('input', this.inputEvent);
+    this.el.addEventListener('backspace', this.backspaceEvent);
+    this.el.addEventListener('dismiss', this.dismissEvent);
 
     // Register global events
-    document.addEventListener('keydown', this.keydownEvent.bind(this));
-    document.body.addEventListener('didfocusinput', this.didFocusInputEvent.bind(this));
-    document.body.addEventListener('didblurinput', this.didBlurInputEvent.bind(this));
+    document.addEventListener('keydown', this.keydownEvent);
+    document.body.addEventListener('didfocusinput', this.didFocusInputEvent);
+    document.body.addEventListener('didblurinput', this.didBlurInputEvent);
   },
   update: function () {
     if (this.data.isOpen) {
@@ -72,13 +80,13 @@ AFRAME.registerComponent('keyboard', {
   },
   tick: function () {},
   remove: function () {
-    this.el.removeEventListener('input', this.inputEvent.bind(this));
-    this.el.removeEventListener('backspace', this.backspaceEvent.bind(this));
-    this.el.removeEventListener('dismiss', this.dismissEvent.bind(this));
+    this.el.removeEventListener('input', this.inputEvent);
+    this.el.removeEventListener('backspace', this.backspaceEvent);
+    this.el.removeEventListener('dismiss', this.dismissEvent);
 
-    document.removeEventListener('keydown', this.keydownEvent.bind(this));
-    document.body.removeEventListener('didfocusinput', this.didFocusInputEvent.bind(this));
-    document.body.removeEventListener('didblurinput', this.didBlurInputEvent.bind(this));
+    document.removeEventListener('keydown', this.keydownEvent);
+    document.body.removeEventListener('didfocusinput', this.didFocusInputEvent);
+    document.body.removeEventListener('didblurinput', this.didBlurInputEvent);
   },
   pause: function () {},
   play: function () {},
