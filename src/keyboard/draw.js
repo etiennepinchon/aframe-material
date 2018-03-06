@@ -1,3 +1,4 @@
+const Assets = require('./assets');
 const Layouts = require('./layouts');
 const Config = require('./config');
 const Behaviors = require('./behaviors');
@@ -237,7 +238,7 @@ Draw.key = (id, type, value)=> {
   el.shadow_el.setAttribute('width', Config.KEY_WIDTH*1.25);
   el.shadow_el.setAttribute('height', Config.KEY_WIDTH*1.25);
   el.shadow_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' -0.002');
-  el.shadow_el.setAttribute('src', '#aframeKeyboardShadow');
+  el.shadow_el.setAttribute('src', Assets.aframeKeyboardShadow);
   el.appendChild(el.shadow_el);
 
   // ---------------------------------------------------------------------------
@@ -294,7 +295,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('width', '0.032');
     icon_el.setAttribute('height', '0.032');
     icon_el.setAttribute('position', '0.04 0.04 0.01')
-    icon_el.setAttribute('src', '#aframeKeyboardShift');
+    icon_el.setAttribute('src', Assets.aframeKeyboardShift);
     el.appendChild(icon_el);
     Draw.el.shiftKey = el;
   }
@@ -307,7 +308,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('width', '0.032');
     icon_el.setAttribute('height', '0.032');
     icon_el.setAttribute('position', '0.04 0.04 0.01')
-    icon_el.setAttribute('src', '#aframeKeyboardGlobal');
+    icon_el.setAttribute('src', Assets.aframeKeyboardGlobal);
     el.appendChild(icon_el);
   }
 
@@ -319,7 +320,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('width', '0.046');
     icon_el.setAttribute('height', '0.046');
     icon_el.setAttribute('position', '0.07 0.04 0.01')
-    icon_el.setAttribute('src', '#aframeKeyboardBackspace');
+    icon_el.setAttribute('src', Assets.aframeKeyboardBackspace);
     el.appendChild(icon_el);
   }
 
@@ -341,7 +342,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('width', '0.034');
     icon_el.setAttribute('height', '0.034');
     icon_el.setAttribute('position', '0.07 0.07 0.011')
-    icon_el.setAttribute('src', '#aframeKeyboardEnter');
+    icon_el.setAttribute('src', Assets.aframeKeyboardEnter);
     el.appendChild(icon_el);
   }
 
@@ -353,7 +354,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('width', '0.046');
     icon_el.setAttribute('height', '0.046');
     icon_el.setAttribute('position', '0.07 0.04 0.01')
-    icon_el.setAttribute('src', '#aframeKeyboardDismiss');
+    icon_el.setAttribute('src', Assets.aframeKeyboardDismiss);
     el.appendChild(icon_el);
   }
 

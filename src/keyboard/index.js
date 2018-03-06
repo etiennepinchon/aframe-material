@@ -1,5 +1,4 @@
 const Utils = require('../utils');
-const Assets = require('./assets');
 const Draw = require('./draw');
 const Behaviors = require('./behaviors');
 const SFX = require('./sfx');
@@ -13,9 +12,6 @@ AFRAME.registerComponent('keyboard', {
   currentInput: null,
   init: function () {
     let that = this;
-
-    // Assets
-    Utils.preloadAssets( Assets );
 
     // SFX
     SFX.init(this.el);

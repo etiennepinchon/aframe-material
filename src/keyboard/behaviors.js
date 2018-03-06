@@ -1,3 +1,4 @@
+const Assets = require('./assets');
 const Config = require('./config');
 const Utils = require('../utils');
 const Event = require('../core/event');
@@ -11,7 +12,7 @@ Behaviors.el = null;
 
 Behaviors.showKeyboard = function(el) {
   if (el.o_position) {
-    el.setAttribute("position", el.o_position);
+    el.object3D.position.copy(el.o_position);
   }
   el.isOpen = true;
   for(let item of el.querySelectorAll('[data-ui]') ) {
@@ -27,7 +28,10 @@ Behaviors.showKeyboard = function(el) {
 Behaviors.hideKeyboard = function(el) {
   let position = el.getAttribute("position");
   if (position.x !== -10000) {
-    el.o_position = position;
+    if (!el.o_position) {
+      el.o_position = new THREE.Vector3();
+    }
+    el.o_position.copy(position);
   }
   el.isOpen = false;
   el.setAttribute("position", "-10000 -10000 -10000");
@@ -42,7 +46,7 @@ Behaviors.destroyKeyboard = function(el) {
 
 Behaviors.openKeyboard = function(el) {
   if (el.o_position) {
-    el.setAttribute("position", el.o_position);
+    el.object3D.position.copy(o_position);
   }
   el.isOpen = true;
   el._transitioning = true;
@@ -97,10 +101,8 @@ Behaviors.addKeyEvents = (el)=>{
   el.addEventListener('click', Behaviors.keyClick);
   el.addEventListener('mousedown', Behaviors.keyDown);
   el.addEventListener('mouseup', Behaviors.keyOut);
-  el.addEventListener('mouseleave', Behaviors.keyOut);
-  el.addEventListener('mouseenter', Behaviors.keyIn );
-  //el.addEventListener('raycaster-intersected', Behaviors.keyIn );
-  //el.addEventListener('raycaster-intersected-cleared', Behaviors.keyOut );
+  el.addEventListener('raycaster-intersected', Behaviors.keyIn );
+  el.addEventListener('raycaster-intersected-cleared', Behaviors.keyOut );
   //triggerdown
   // https://aframe.io/docs/0.6.0/components/hand-controls.html
 };
@@ -193,9 +195,9 @@ Behaviors.shiftToggle = function() {
 
   var icon_el = Behaviors.el.shiftKey.querySelector('[data-type]');
   if (Behaviors.isShiftEnabled) {
-    icon_el.setAttribute('src', '#aframeKeyboardShiftActive');
+    icon_el.setAttribute('src', Assets.aframeKeyboardShiftActive);
   } else {
-    icon_el.setAttribute('src', '#aframeKeyboardShift');
+    icon_el.setAttribute('src', Assets.aframeKeyboardShift);
   }
 
   for ( let keyEl of document.querySelectorAll("[key-id]") ) {
