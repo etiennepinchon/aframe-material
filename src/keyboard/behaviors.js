@@ -1,3 +1,4 @@
+const Assets = require('./assets');
 const Config = require('./config');
 const Utils = require('../utils');
 const Event = require('../core/event');
@@ -100,10 +101,8 @@ Behaviors.addKeyEvents = (el)=>{
   el.addEventListener('click', Behaviors.keyClick);
   el.addEventListener('mousedown', Behaviors.keyDown);
   el.addEventListener('mouseup', Behaviors.keyOut);
-  el.addEventListener('mouseleave', Behaviors.keyOut);
-  el.addEventListener('mouseenter', Behaviors.keyIn );
-  //el.addEventListener('raycaster-intersected', Behaviors.keyIn );
-  //el.addEventListener('raycaster-intersected-cleared', Behaviors.keyOut );
+  el.addEventListener('raycaster-intersected', Behaviors.keyIn );
+  el.addEventListener('raycaster-intersected-cleared', Behaviors.keyOut );
   //triggerdown
   // https://aframe.io/docs/0.6.0/components/hand-controls.html
 };
@@ -196,9 +195,9 @@ Behaviors.shiftToggle = function() {
 
   var icon_el = Behaviors.el.shiftKey.querySelector('[data-type]');
   if (Behaviors.isShiftEnabled) {
-    icon_el.setAttribute('src', '#aframeKeyboardShiftActive');
+    icon_el.setAttribute('src', Assets.aframeKeyboardShiftActive);
   } else {
-    icon_el.setAttribute('src', '#aframeKeyboardShift');
+    icon_el.setAttribute('src', Assets.aframeKeyboardShift);
   }
 
   for ( let keyEl of document.querySelectorAll("[key-id]") ) {
