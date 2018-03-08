@@ -2,19 +2,32 @@ const Assets = require('./assets');
 const Layouts = require('./layouts');
 const Config = require('./config');
 const Behaviors = require('./behaviors');
-const Draw = {};
 
-Draw.el = null;
+module.exports.drawKeyboard = function (component) {
+  // Init keyboard UI
+  component.actionsUI  = drawActionsUI(component);
+  component.mainUI = drawMainUI(component);
+  component.numericalUI = drawNumericalUI(component);
+  component.hoverHighlight = drawHoverHighlight(component);
 
-Draw.init = (el)=>{
-  Draw.el = el;
-  Behaviors.el = el;
-  Behaviors.SFX = el.SFX;
-}
+  // Create layout
+  component.alphabeticalLayout = drawAlphabeticalLayout(component);
+  component.symbolsLayout = drawSymbolsLayout(component);
+
+  // Append layouts to UI
+  component.numericalUI.appendChild( drawNumericalLayout(component) );
+  component.mainUI.appendChild( component.alphabeticalLayout );
+  component.actionsUI.appendChild( drawActionsLayout(component) );
+
+  component.el.appendChild( component.numericalUI );
+  component.el.appendChild( component.mainUI );
+  component.el.appendChild( component.actionsUI );
+  component.el.appendChild( component.hoverHighlight  );
+};
 
 // -----------------------------------------------------------------------------
 // DRAW HOVER HIGHLIGHT
-Draw.hoverHighlight = ()=> {
+function drawHoverHighlight (component) {
   var slice;
   slice = document.createElement('a-entity');
   slice.setAttribute('id', 'aframeKeyboardHighlight');
@@ -35,7 +48,7 @@ Draw.hoverHighlight = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW NUMERICAL UI
 
-Draw.numericalUI = ()=> {
+function drawNumericalUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.025 0 0.12');
   wrapper.setAttribute('rotation', '0 25 0');
@@ -62,7 +75,7 @@ Draw.numericalUI = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW MAIN UI
 
-Draw.mainUI = ()=>{
+function drawMainUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.312 0 0');
   wrapper.setAttribute('data-ui', true);
@@ -88,7 +101,7 @@ Draw.mainUI = ()=>{
 // -----------------------------------------------------------------------------
 // DRAW ACTION UI
 
-Draw.actionsUI = ()=> {
+function drawActionsUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '1.180 0 0.01');
   wrapper.setAttribute('rotation', '0 -25 0');
@@ -115,7 +128,7 @@ Draw.actionsUI = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW NUMERICAL LAYOUT
 
-Draw.numericalLayout = ()=> {
+function drawNumericalLayout (component) {
   var data = Layouts.numerical;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -123,7 +136,7 @@ Draw.numericalLayout = ()=> {
   let index_y = 0;
   for (var i in data) {
     let key_id = 'num-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
     let index_x = i%3;
     let x = Config.KEY_WIDTH * index_x;
     let y = Config.KEY_WIDTH * index_y;
@@ -137,8 +150,7 @@ Draw.numericalLayout = ()=> {
 
 // -----------------------------------------------------------------------------
 // DRAW ALPHABETICAL LAYOUT
-
-Draw.alphabeticalLayout = ()=> {
+function drawAlphabeticalLayout (component) {
   var data = Layouts.alphabetical;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -147,7 +159,7 @@ Draw.alphabeticalLayout = ()=> {
 
   for (var i in data) {
     let key_id = 'main-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
 
     let x = Config.KEY_WIDTH*index_x;
     let y = Config.KEY_WIDTH*index_y;
@@ -170,7 +182,6 @@ Draw.alphabeticalLayout = ()=> {
     }
 
     key.setAttribute('position', `${x} -${y} 0`);
-
     if (index_y === 1 && index_x === 8) {
       index_x = -1;
       index_y++;
@@ -189,7 +200,7 @@ Draw.alphabeticalLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW SYMBOLS LAYOUT
 
-Draw.symbolsLayout = ()=> {
+function drawSymbolsLayout (component) {
   var data = Layouts.symbols;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -199,7 +210,7 @@ Draw.symbolsLayout = ()=> {
   for (var i in data) {
 
     let key_id = 'symbols-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
     let x = Config.KEY_WIDTH*index_x;
     let y = Config.KEY_WIDTH*index_y;
 
@@ -231,7 +242,7 @@ Draw.symbolsLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW ACTIONS LAYOUT
 
-Draw.actionsLayout = ()=> {
+function drawActionsLayout (component) {
   var data = Layouts.actions;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -239,7 +250,7 @@ Draw.actionsLayout = ()=> {
   let val_y = 0;
   for (var i in data) {
     let key_id = 'action-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
 
     key.setAttribute('position', `0 -${val_y} 0`);
     if (i == 0) {
@@ -257,9 +268,8 @@ Draw.actionsLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW KEY
 
-Draw.key = (id, type, value)=> {
+function drawKey(component, id, type, value) {
   var el;
-  var that = this;
   var slice;
 
   el = document.createElement('a-entity');
@@ -283,11 +293,6 @@ Draw.key = (id, type, value)=> {
     });
     el.appendChild(slice);
   }
-
-  // ---------------------------------------------------------------------------
-  // EVENTS
-
-  Behaviors.addKeyEvents(el);
 
   // ---------------------------------------------------------------------------
   // TEXT KEY
@@ -340,7 +345,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('position', '0.04 0.04 0.01')
     icon_el.setAttribute('src', Assets.aframeKeyboardShift);
     el.appendChild(icon_el);
-    Draw.el.shiftKey = el;
+    component.shiftKey = el;
   }
 
   // ---------------------------------------------------------------------------
@@ -376,7 +381,6 @@ Draw.key = (id, type, value)=> {
     circle_el.setAttribute('radius', 0.044);
     circle_el.setAttribute('position', '0.07 0.07 0.01')
     el.appendChild(circle_el);
-
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.034');
     icon_el.setAttribute('height', '0.034');
@@ -397,7 +401,6 @@ Draw.key = (id, type, value)=> {
     el.appendChild(icon_el);
   }
 
+  component.keys.push(el);
   return el;
 }
-
-module.exports = Draw;
