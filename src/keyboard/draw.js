@@ -13,6 +13,26 @@ Draw.init = (el)=>{
 }
 
 // -----------------------------------------------------------------------------
+// DRAW HOVER HIGHLIGHT
+Draw.hoverHighlight = ()=> {
+  var slice;
+  slice = document.createElement('a-entity');
+  slice.setAttribute('id', 'aframeKeyboardHighlight');
+  slice.setAttribute('slice9', {
+    color: Config.KEY_COLOR_ACTIVE,
+    src: Assets.slice,
+    left: 50,
+    right: 52,
+    top: 50,
+    bottom: 52,
+    padding: 0.04,
+    width: Config.KEY_WIDTH,
+    height: Config.KEY_WIDTH
+  });
+  return slice;
+};
+
+// -----------------------------------------------------------------------------
 // DRAW NUMERICAL UI
 
 Draw.numericalUI = ()=> {
@@ -248,20 +268,21 @@ Draw.key = (id, type, value)=> {
   el.setAttribute('key-type', type);
   el.setAttribute('key-value', value);
 
-  slice = document.createElement('a-entity');
-  slice.setAttribute('slice9', {
-    color: Config.KEYBOARD_COLOR,
-    src: Assets.slice,
-    left: 50,
-    right: 52,
-    top: 50,
-    bottom: 52,
-    padding: 0.04,
-    width: Config.KEY_WIDTH,
-    height: Config.KEY_WIDTH
-  });
-  slice.setAttribute('position', '0.04 0.036 0');
-  el.appendChild(slice);
+  if (type === 'spacebar') {
+    slice = document.createElement('a-entity');
+    slice.setAttribute('slice9', {
+      color: Config.KEYBOARD_COLOR,
+      src: Assets.slice,
+      left: 50,
+      right: 52,
+      top: 50,
+      bottom: 52,
+      padding: 0.04,
+      width: Config.KEY_WIDTH,
+      height: Config.KEY_WIDTH
+    });
+    el.appendChild(slice);
+  }
 
   // ---------------------------------------------------------------------------
   // EVENTS
@@ -309,14 +330,6 @@ Draw.key = (id, type, value)=> {
   }
 
   // ---------------------------------------------------------------------------
-  // ACTION KEY
-
-  if (type === 'backspace' || type === 'enter' || type === 'dismiss') {
-    slice.setAttribute('slice9', 'width', Config.ACTION_WIDTH);
-    slice.setAttribute('position', '0.07 0.038 0');
-  }
-
-  // ---------------------------------------------------------------------------
   // SHIFT KEY
 
   if (type === 'shift') {
@@ -358,9 +371,6 @@ Draw.key = (id, type, value)=> {
   // ENTER
 
   else if (type === 'enter') {
-    slice.setAttribute('slice9', {height: Config.ACTION_WIDTH});
-    slice.setAttribute('position', '0.07 0.067 0');
-
     var circle_el = document.createElement('a-circle');
     circle_el.setAttribute('color', '#4285f4');
     circle_el.setAttribute('radius', 0.044);

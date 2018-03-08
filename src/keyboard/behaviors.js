@@ -149,12 +149,16 @@ Behaviors.keyClick = function() {
 // KEYDOWN
 
 Behaviors.keyDown = function() {
+  var keyHighlight;
   if (Behaviors.el._transitioning) { return; }
   this.object3D.position.z = 0.003;
   if (this.getAttribute('key-type') === 'spacebar') {
     this.setAttribute('color', Config.SPACEBAR_COLOR_ACTIVE);
   } else {
-    this.setAttribute('color', Config.KEY_COLOR_ACTIVE);
+    keyHighlight = document.getElementById('aframeKeyboardHighlight');
+    keyHighlight.object3D.position.copy(this.object3D.position);
+    keyHighlight.object3D.position.x += 0.04;
+    keyHighlight.object3D.position.y += 0.036;
   }
 };
 
@@ -162,15 +166,21 @@ Behaviors.keyDown = function() {
 // KEYIN
 
 Behaviors.keyIn = function() {
+  var keyHighlight;
   if (Behaviors.el._transitioning) { return; }
-  if (this.object3D.children[2] && this.object3D.children[2].material && !this.object3D.children[2].material.opacity) {
+  if (this.object3D.children[2] && this.object3D.children[2].material &&
+      !this.object3D.children[2].material.opacity) {
     return
   }
   SFX.keyIn(Behaviors.el);
   if (this.getAttribute('key-type') === 'spacebar') {
     this.children[0].setAttribute('slice9', 'color', Config.SPACEBAR_COLOR_HIGHLIGHT);
   } else {
-    this.children[0].setAttribute('slice9', 'color', Config.KEY_COLOR_HIGHLIGHT);
+    keyHighlight = document.getElementById('aframeKeyboardHighlight');
+    keyHighlight.object3D.visible = true;
+    keyHighlight.object3D.position.copy(this.object3D.position);
+    keyHighlight.object3D.position.x += 0.04;
+    keyHighlight.object3D.position.y += 0.036;
   }
 };
 
@@ -178,11 +188,12 @@ Behaviors.keyIn = function() {
 // KEYOUT
 
 Behaviors.keyOut = function() {
+  var keyHighlight;
   this.object3D.position.z = 0;
   if (this.getAttribute('key-type') === 'spacebar') {
     this.children[0].setAttribute('slice9', 'color', Config.KEY_COLOR_ACTIVE);
   } else {
-    this.children[0].setAttribute('slice9', 'color', Config.KEYBOARD_COLOR);
+    keyHighlight.object3D.visible = false;
   }
 }
 

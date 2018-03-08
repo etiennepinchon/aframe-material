@@ -22,7 +22,8 @@ AFRAME.registerComponent('keyboard', {
     // Init keyboard UI
     let numericalUI = Draw.numericalUI(),
         mainUI      = Draw.mainUI(),
-        actionsUI   = Draw.actionsUI();
+        actionsUI   = Draw.actionsUI(),
+        hoverHighlight = Draw.hoverHighlight();
 
     // Create layout
     this.el.alphabeticalLayout = Draw.alphabeticalLayout();
@@ -36,6 +37,7 @@ AFRAME.registerComponent('keyboard', {
     this.el.appendChild( numericalUI );
     this.el.appendChild( mainUI );
     this.el.appendChild( actionsUI );
+    this.el.appendChild( hoverHighlight  );
 
     // Inject methods in elements..
     this.el.show = function() { Behaviors.showKeyboard(that.el); }
