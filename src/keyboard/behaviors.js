@@ -168,9 +168,9 @@ Behaviors.keyIn = function() {
   }
   SFX.keyIn(Behaviors.el);
   if (this.getAttribute('key-type') === 'spacebar') {
-    this.setAttribute('color', Config.SPACEBAR_COLOR_HIGHLIGHT);
+    this.children[0].setAttribute('slice9', 'color', Config.SPACEBAR_COLOR_HIGHLIGHT);
   } else {
-    this.setAttribute('color', Config.KEY_COLOR_HIGHLIGHT);
+    this.children[0].setAttribute('slice9', 'color', Config.KEY_COLOR_HIGHLIGHT);
   }
 };
 
@@ -180,9 +180,9 @@ Behaviors.keyIn = function() {
 Behaviors.keyOut = function() {
   this.object3D.position.z = 0;
   if (this.getAttribute('key-type') === 'spacebar') {
-    this.setAttribute('color', Config.KEY_COLOR_ACTIVE);
+    this.children[0].setAttribute('slice9', 'color', Config.KEY_COLOR_ACTIVE);
   } else {
-    this.setAttribute('color', Config.KEYBOARD_COLOR);
+    this.children[0].setAttribute('slice9', 'color', Config.KEYBOARD_COLOR);
   }
 }
 
