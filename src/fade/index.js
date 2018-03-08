@@ -8,7 +8,9 @@ var opacityUpdate = function(opacity) {
     }
   });
   for (let text of this.textEntities) {
-    text.components.text.material.uniforms.opacity.value = opacity;
+    if (text.components.text) {
+      text.components.text.material.uniforms.opacity.value = opacity;
+    }
   }
 }
 

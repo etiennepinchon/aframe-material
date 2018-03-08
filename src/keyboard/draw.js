@@ -21,11 +21,19 @@ Draw.numericalUI = ()=> {
   wrapper.setAttribute('rotation', '0 25 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.280');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.280,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.14 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -39,11 +47,19 @@ Draw.mainUI = ()=>{
   wrapper.setAttribute('position', '0.312 0 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.840');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.840,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.42 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -58,11 +74,19 @@ Draw.actionsUI = ()=> {
   wrapper.setAttribute('rotation', '0 -25 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.180');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.180,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.09 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -81,8 +105,8 @@ Draw.numericalLayout = ()=> {
     let key_id = 'num-'+i;
     let key = Draw.key(key_id, data[i].type, data[i].value);
     let index_x = i%3;
-    let x = Config.KEY_WIDTH*index_x;
-    let y = Config.KEY_WIDTH*index_y;
+    let x = Config.KEY_WIDTH * index_x;
+    let y = Config.KEY_WIDTH * index_y;
     key.setAttribute('position', `${x} -${y} 0`);
     if (index_x === 2) { index_y++; }
     wrapper.appendChild(key);
@@ -214,25 +238,35 @@ Draw.actionsLayout = ()=> {
 // DRAW KEY
 
 Draw.key = (id, type, value)=> {
+  var el;
   var that = this;
+  var slice;
 
-  var el = document.createElement('a-rounded');
+  el = document.createElement('a-entity');
+  el.classList.add('aframeMaterialKey');
   el.setAttribute('key-id', id);
-  el.setAttribute('width', Config.KEY_WIDTH);
-  el.setAttribute('height', Config.KEY_WIDTH);
-  el.setAttribute('radius', '0.008');
-  el.setAttribute('position', '0 0 0');
   el.setAttribute('key-type', type);
   el.setAttribute('key-value', value);
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+
+  slice = document.createElement('a-entity');
+  slice.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 52,
+    top: 50,
+    bottom: 52,
+    padding: 0.04,
+    width: Config.KEY_WIDTH,
+    height: Config.KEY_WIDTH
+  });
+  slice.setAttribute('position', '0.04 0.036 0');
+  el.appendChild(slice);
 
   // ---------------------------------------------------------------------------
   // EVENTS
 
   Behaviors.addKeyEvents(el);
-
-  // ---------------------------------------------------------------------------
-  // SHADOW
 
   // ---------------------------------------------------------------------------
   // TEXT KEY
@@ -241,7 +275,11 @@ Draw.key = (id, type, value)=> {
     var letter_el = document.createElement('a-text');
     letter_el.setAttribute('value', value);
     letter_el.setAttribute('color', '#dbddde');
-    letter_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' 0.01');
+    letter_el.setAttribute('position', {
+      x: Config.KEY_WIDTH / 2,
+      y: Config.KEY_WIDTH / 2,
+      z: 0.01
+    });
     letter_el.setAttribute('scale', '0.16 0.16 0.16');
     letter_el.setAttribute('align', 'center');
     letter_el.setAttribute('baseline', 'center');
@@ -252,9 +290,12 @@ Draw.key = (id, type, value)=> {
   // SPACEBAR KEY
 
   if (type === 'spacebar') {
-    el.setAttribute('width', Config.SPACE_KEY_WIDTH);
-    el.setAttribute('height', Config.SPACE_KEY_HEIGHT);
-    el.setAttribute('color', '#404b50');
+    slice.setAttribute('slice9', {
+      color: '#404b50',
+      width: Config.SPACE_KEY_WIDTH,
+      height: Config.SPACE_KEY_HEIGHT
+    });
+    slice.setAttribute('position', '0.19 0.02 0');
     letter_el.setAttribute('color', '#adb1b3');
     letter_el.setAttribute('scale', '0.12 0.12 0.12');
     letter_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' 0');
@@ -271,7 +312,8 @@ Draw.key = (id, type, value)=> {
   // ACTION KEY
 
   if (type === 'backspace' || type === 'enter' || type === 'dismiss') {
-    el.setAttribute('width', Config.ACTION_WIDTH);
+    slice.setAttribute('slice9', 'width', Config.ACTION_WIDTH);
+    slice.setAttribute('position', '0.07 0.038 0');
   }
 
   // ---------------------------------------------------------------------------
@@ -316,7 +358,8 @@ Draw.key = (id, type, value)=> {
   // ENTER
 
   else if (type === 'enter') {
-    el.setAttribute('height', Config.ACTION_WIDTH);
+    slice.setAttribute('slice9', {height: Config.ACTION_WIDTH});
+    slice.setAttribute('position', '0.07 0.067 0');
 
     var circle_el = document.createElement('a-circle');
     circle_el.setAttribute('color', '#4285f4');
