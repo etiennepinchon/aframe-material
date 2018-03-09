@@ -46,7 +46,7 @@ Behaviors.destroyKeyboard = function(el) {
 
 Behaviors.openKeyboard = function(el) {
   if (el.o_position) {
-    el.object3D.position.copy(o_position);
+    el.object3D.position.copy(el.o_position);
   }
   el.isOpen = true;
   el._transitioning = true;
