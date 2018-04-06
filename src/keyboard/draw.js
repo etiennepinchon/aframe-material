@@ -2,30 +2,71 @@ const Assets = require('./assets');
 const Layouts = require('./layouts');
 const Config = require('./config');
 const Behaviors = require('./behaviors');
-const Draw = {};
 
-Draw.el = null;
+module.exports.drawKeyboard = function (component) {
+  // Init keyboard UI
+  component.actionsUI  = drawActionsUI(component);
+  component.mainUI = drawMainUI(component);
+  component.numericalUI = drawNumericalUI(component);
+  component.hoverHighlight = drawHoverHighlight(component);
 
-Draw.init = (el)=>{
-  Draw.el = el;
-  Behaviors.el = el;
-  Behaviors.SFX = el.SFX;
-}
+  // Create layout
+  component.alphabeticalLayout = drawAlphabeticalLayout(component);
+  component.symbolsLayout = drawSymbolsLayout(component);
+
+  // Append layouts to UI
+  component.numericalUI.appendChild( drawNumericalLayout(component) );
+  component.mainUI.appendChild( component.alphabeticalLayout );
+  component.actionsUI.appendChild( drawActionsLayout(component) );
+
+  component.el.appendChild( component.numericalUI );
+  component.el.appendChild( component.mainUI );
+  component.el.appendChild( component.actionsUI );
+  component.el.appendChild( component.hoverHighlight  );
+};
+
+// -----------------------------------------------------------------------------
+// DRAW HOVER HIGHLIGHT
+function drawHoverHighlight (component) {
+  var slice;
+  slice = document.createElement('a-entity');
+  slice.setAttribute('id', 'aframeKeyboardHighlight');
+  slice.setAttribute('slice9', {
+    color: Config.KEY_COLOR_ACTIVE,
+    src: Assets.slice,
+    left: 50,
+    right: 52,
+    top: 50,
+    bottom: 52,
+    padding: 0.04,
+    width: Config.KEY_WIDTH,
+    height: Config.KEY_WIDTH
+  });
+  return slice;
+};
 
 // -----------------------------------------------------------------------------
 // DRAW NUMERICAL UI
 
-Draw.numericalUI = ()=> {
+function drawNumericalUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.025 0 0.12');
   wrapper.setAttribute('rotation', '0 25 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.280');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.280,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.14 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -34,16 +75,24 @@ Draw.numericalUI = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW MAIN UI
 
-Draw.mainUI = ()=>{
+function drawMainUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.312 0 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.840');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.840,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.42 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -52,17 +101,25 @@ Draw.mainUI = ()=>{
 // -----------------------------------------------------------------------------
 // DRAW ACTION UI
 
-Draw.actionsUI = ()=> {
+function drawActionsUI (component) {
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '1.180 0 0.01');
   wrapper.setAttribute('rotation', '0 -25 0');
   wrapper.setAttribute('data-ui', true);
 
-  var el = document.createElement('a-rounded');
-  el.setAttribute('width', '0.180');
-  el.setAttribute('height', '0.360');
-  el.setAttribute('radius', '0.02');
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
+  var el = document.createElement('a-entity');
+  el.setAttribute('slice9', {
+    color: Config.KEYBOARD_COLOR,
+    src: Assets.slice,
+    left: 50,
+    right: 50,
+    top: 50,
+    bottom: 50,
+    padding: 0.04,
+    width: 0.180,
+    height: 0.360
+  });
+  el.setAttribute('position', '0.09 0.18 0');
   wrapper.appendChild(el);
 
   return wrapper;
@@ -71,7 +128,7 @@ Draw.actionsUI = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW NUMERICAL LAYOUT
 
-Draw.numericalLayout = ()=> {
+function drawNumericalLayout (component) {
   var data = Layouts.numerical;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -79,10 +136,10 @@ Draw.numericalLayout = ()=> {
   let index_y = 0;
   for (var i in data) {
     let key_id = 'num-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
     let index_x = i%3;
-    let x = Config.KEY_WIDTH*index_x;
-    let y = Config.KEY_WIDTH*index_y;
+    let x = Config.KEY_WIDTH * index_x;
+    let y = Config.KEY_WIDTH * index_y;
     key.setAttribute('position', `${x} -${y} 0`);
     if (index_x === 2) { index_y++; }
     wrapper.appendChild(key);
@@ -93,8 +150,7 @@ Draw.numericalLayout = ()=> {
 
 // -----------------------------------------------------------------------------
 // DRAW ALPHABETICAL LAYOUT
-
-Draw.alphabeticalLayout = ()=> {
+function drawAlphabeticalLayout (component) {
   var data = Layouts.alphabetical;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -103,7 +159,7 @@ Draw.alphabeticalLayout = ()=> {
 
   for (var i in data) {
     let key_id = 'main-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
 
     let x = Config.KEY_WIDTH*index_x;
     let y = Config.KEY_WIDTH*index_y;
@@ -126,7 +182,6 @@ Draw.alphabeticalLayout = ()=> {
     }
 
     key.setAttribute('position', `${x} -${y} 0`);
-
     if (index_y === 1 && index_x === 8) {
       index_x = -1;
       index_y++;
@@ -145,7 +200,7 @@ Draw.alphabeticalLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW SYMBOLS LAYOUT
 
-Draw.symbolsLayout = ()=> {
+function drawSymbolsLayout (component) {
   var data = Layouts.symbols;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -155,7 +210,7 @@ Draw.symbolsLayout = ()=> {
   for (var i in data) {
 
     let key_id = 'symbols-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
     let x = Config.KEY_WIDTH*index_x;
     let y = Config.KEY_WIDTH*index_y;
 
@@ -187,7 +242,7 @@ Draw.symbolsLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW ACTIONS LAYOUT
 
-Draw.actionsLayout = ()=> {
+function drawActionsLayout (component) {
   var data = Layouts.actions;
   var wrapper = document.createElement('a-entity');
   wrapper.setAttribute('position', '0.02 0.26 0.001');
@@ -195,7 +250,7 @@ Draw.actionsLayout = ()=> {
   let val_y = 0;
   for (var i in data) {
     let key_id = 'action-'+i;
-    let key = Draw.key(key_id, data[i].type, data[i].value);
+    let key = drawKey(component, key_id, data[i].type, data[i].value);
 
     key.setAttribute('position', `0 -${val_y} 0`);
     if (i == 0) {
@@ -213,33 +268,31 @@ Draw.actionsLayout = ()=> {
 // -----------------------------------------------------------------------------
 // DRAW KEY
 
-Draw.key = (id, type, value)=> {
-  var that = this;
+function drawKey(component, id, type, value) {
+  var el;
+  var slice;
 
-  var el = document.createElement('a-rounded');
+  el = document.createElement('a-entity');
+  el.classList.add('aframeMaterialKey');
   el.setAttribute('key-id', id);
-  el.setAttribute('width', Config.KEY_WIDTH);
-  el.setAttribute('height', Config.KEY_WIDTH);
-  el.setAttribute('radius', '0.008');
-  el.setAttribute('position', '0 0 0');
   el.setAttribute('key-type', type);
   el.setAttribute('key-value', value);
-  el.setAttribute('color', Config.KEYBOARD_COLOR);
 
-  // ---------------------------------------------------------------------------
-  // EVENTS
-
-  Behaviors.addKeyEvents(el);
-
-  // ---------------------------------------------------------------------------
-  // SHADOW
-
-  el.shadow_el = document.createElement('a-image');
-  el.shadow_el.setAttribute('width', Config.KEY_WIDTH*1.25);
-  el.shadow_el.setAttribute('height', Config.KEY_WIDTH*1.25);
-  el.shadow_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' -0.002');
-  el.shadow_el.setAttribute('src', Assets.aframeKeyboardShadow);
-  el.appendChild(el.shadow_el);
+  if (type === 'spacebar') {
+    slice = document.createElement('a-entity');
+    slice.setAttribute('slice9', {
+      color: Config.KEYBOARD_COLOR,
+      src: Assets.slice,
+      left: 50,
+      right: 52,
+      top: 50,
+      bottom: 52,
+      padding: 0.04,
+      width: Config.KEY_WIDTH,
+      height: Config.KEY_WIDTH
+    });
+    el.appendChild(slice);
+  }
 
   // ---------------------------------------------------------------------------
   // TEXT KEY
@@ -248,7 +301,11 @@ Draw.key = (id, type, value)=> {
     var letter_el = document.createElement('a-text');
     letter_el.setAttribute('value', value);
     letter_el.setAttribute('color', '#dbddde');
-    letter_el.setAttribute('position', Config.KEY_WIDTH/2+' '+Config.KEY_WIDTH/2+' 0.01');
+    letter_el.setAttribute('position', {
+      x: Config.KEY_WIDTH / 2,
+      y: Config.KEY_WIDTH / 2,
+      z: 0.01
+    });
     letter_el.setAttribute('scale', '0.16 0.16 0.16');
     letter_el.setAttribute('align', 'center');
     letter_el.setAttribute('baseline', 'center');
@@ -259,12 +316,12 @@ Draw.key = (id, type, value)=> {
   // SPACEBAR KEY
 
   if (type === 'spacebar') {
-    el.setAttribute('width', Config.SPACE_KEY_WIDTH);
-    el.setAttribute('height', Config.SPACE_KEY_HEIGHT);
-    el.setAttribute('color', '#404b50');
-    el.shadow_el.setAttribute('width', Config.SPACE_KEY_WIDTH*1.12);
-    el.shadow_el.setAttribute('height', Config.SPACE_KEY_HEIGHT*1.2);
-    el.shadow_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' -0.02');
+    slice.setAttribute('slice9', {
+      color: '#404b50',
+      width: Config.SPACE_KEY_WIDTH,
+      height: Config.SPACE_KEY_HEIGHT
+    });
+    slice.setAttribute('position', '0.19 0.02 0');
     letter_el.setAttribute('color', '#adb1b3');
     letter_el.setAttribute('scale', '0.12 0.12 0.12');
     letter_el.setAttribute('position', Config.SPACE_KEY_WIDTH/2+' '+Config.SPACE_KEY_HEIGHT/2+' 0');
@@ -278,15 +335,6 @@ Draw.key = (id, type, value)=> {
   }
 
   // ---------------------------------------------------------------------------
-  // ACTION KEY
-
-  if (type === 'backspace' || type === 'enter' || type === 'dismiss') {
-    el.setAttribute('width', Config.ACTION_WIDTH);
-    el.shadow_el.setAttribute('width', Config.ACTION_WIDTH*1.25);
-    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.KEY_WIDTH/2+' -0.02');
-  }
-
-  // ---------------------------------------------------------------------------
   // SHIFT KEY
 
   if (type === 'shift') {
@@ -297,7 +345,7 @@ Draw.key = (id, type, value)=> {
     icon_el.setAttribute('position', '0.04 0.04 0.01')
     icon_el.setAttribute('src', Assets.aframeKeyboardShift);
     el.appendChild(icon_el);
-    Draw.el.shiftKey = el;
+    component.shiftKey = el;
   }
 
   // ---------------------------------------------------------------------------
@@ -328,16 +376,11 @@ Draw.key = (id, type, value)=> {
   // ENTER
 
   else if (type === 'enter') {
-    el.setAttribute('height', Config.ACTION_WIDTH);
-    el.shadow_el.setAttribute('height', Config.ACTION_WIDTH*1.25);
-    el.shadow_el.setAttribute('position', Config.ACTION_WIDTH/2+' '+Config.ACTION_WIDTH/2+' -0.02');
-
     var circle_el = document.createElement('a-circle');
     circle_el.setAttribute('color', '#4285f4');
     circle_el.setAttribute('radius', 0.044);
     circle_el.setAttribute('position', '0.07 0.07 0.01')
     el.appendChild(circle_el);
-
     var icon_el = document.createElement('a-image');
     icon_el.setAttribute('width', '0.034');
     icon_el.setAttribute('height', '0.034');
@@ -358,7 +401,6 @@ Draw.key = (id, type, value)=> {
     el.appendChild(icon_el);
   }
 
+  component.keys.push(el);
   return el;
 }
-
-module.exports = Draw;

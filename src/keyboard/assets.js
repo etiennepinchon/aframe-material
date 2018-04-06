@@ -1,4 +1,5 @@
 module.exports = {
+  slice: `${AFRAME.ASSETS_PATH}/images/widget.png`,
   aframeKeyboardShift: `${AFRAME.ASSETS_PATH}/images/ShiftIcon.png`,
   aframeKeyboardShiftActive: `${AFRAME.ASSETS_PATH}/images/ShiftActiveIcon.png`,
   aframeKeyboardGlobal: `${AFRAME.ASSETS_PATH}/images/GlobalIcon.png`,

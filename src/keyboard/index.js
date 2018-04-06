@@ -1,48 +1,49 @@
-const Utils = require('../utils');
 const Draw = require('./draw');
 const Behaviors = require('./behaviors');
 const SFX = require('./sfx');
-const Event = require('../core/event');
 
 AFRAME.registerComponent('keyboard', {
   schema: {
     isOpen: { type: "boolean", default: false },
     physicalKeyboard: { type: "boolean", default: false }
   },
-  currentInput: null,
+
   init: function () {
     let that = this;
+
+    this.actionsUI  = null;
+    this.mainUI = null;
+    this.numericalUI = null;
+    this.hoverHighlight = null;
+    this.alphabeticalLayout = null;
+    this.symbolsLayout = null;
+
+    this.currentInput = null;
+    this.isShiftEnabled = false;
+    this.isSymbols = false;
+    this.shiftKey = null;
+
+    this.keys = [];
 
     // SFX
     SFX.init(this.el);
 
-    // Draw
-    Draw.init( this.el );
+    // Create keyboard.
+    Draw.drawKeyboard(this);
 
-    // Init keyboard UI
-    let numericalUI = Draw.numericalUI(),
-        mainUI      = Draw.mainUI(),
-        actionsUI   = Draw.actionsUI();
+    this.mainUI.addEventListener('raycaster-intersected', evt => {
+      console.log(evt);
+    });
 
-    // Create layout
-    this.el.alphabeticalLayout = Draw.alphabeticalLayout();
-    this.el.symbolsLayout = Draw.symbolsLayout();
+    // Add event listeners to keys.
+    this.keys.forEach(key => Behaviors.addKeyEvents(that, key) );
 
-    // Append layouts to UI
-    numericalUI.appendChild( Draw.numericalLayout() );
-    mainUI.appendChild( this.el.alphabeticalLayout );
-    actionsUI.appendChild( Draw.actionsLayout() );
-
-    this.el.appendChild( numericalUI );
-    this.el.appendChild( mainUI );
-    this.el.appendChild( actionsUI );
-
-    // Inject methods in elements..
-    this.el.show = function() { Behaviors.showKeyboard(that.el); }
-    this.el.hide = function() { Behaviors.hideKeyboard(that.el); }
-    this.el.open = function() { Behaviors.openKeyboard(that.el); }
-    this.el.dismiss = function() { Behaviors.dismissKeyboard(that.el); }
-    this.el.destroy = function() { Behaviors.destroyKeyboard(that.el); }
+    // Inject methods in keyboard element.
+    this.el.show = function() { Behaviors.showKeyboard(that); }
+    this.el.hide = function() { Behaviors.hideKeyboard(that); }
+    this.el.open = function() { Behaviors.openKeyboard(that); }
+    this.el.dismiss = function() { Behaviors.dismissKeyboard(that); }
+    this.el.destroy = function() { Behaviors.destroyKeyboard(that); }
 
     // Set default value
     this.el.setAttribute("scale", "2 2 2");
@@ -59,14 +60,15 @@ AFRAME.registerComponent('keyboard', {
     document.body.addEventListener('didfocusinput', this.didFocusInputEvent.bind(this));
     document.body.addEventListener('didblurinput', this.didBlurInputEvent.bind(this));
   },
+
   update: function () {
     if (this.data.isOpen) {
-      Behaviors.showKeyboard(this.el);
+      Behaviors.showKeyboard(this);
     } else {
-      Behaviors.hideKeyboard(this.el);
+      Behaviors.hideKeyboard(this);
     }
   },
-  tick: function () {},
+
   remove: function () {
     this.el.removeEventListener('input', this.inputEvent.bind(this));
     this.el.removeEventListener('backspace', this.backspaceEvent.bind(this));
@@ -76,8 +78,6 @@ AFRAME.registerComponent('keyboard', {
     document.body.removeEventListener('didfocusinput', this.didFocusInputEvent.bind(this));
     document.body.removeEventListener('didblurinput', this.didBlurInputEvent.bind(this));
   },
-  pause: function () {},
-  play: function () {},
 
   // Fired on keyboard key press
   inputEvent: function(e) {
@@ -106,17 +106,17 @@ AFRAME.registerComponent('keyboard', {
       e.stopPropagation();
 
       if (e.key === 'Enter') {
-        Event.emit(Behaviors.el, 'input', '\n');
-        Event.emit(Behaviors.el, 'enter', '\n');
+        this.el.emit('input', '\n');
+        this.el.emit('enter', '\n');
       }
       else if (e.key === 'Backspace') {
-        Event.emit(Behaviors.el, 'backspace');
+        this.el.emit('backspace');
       }
       else if (e.key === 'Escape') {
-        Event.emit(Behaviors.el, 'dismiss');
+        this.el.emit('dismiss');
       }
       else if (e.key.length < 2) {
-        Event.emit(Behaviors.el, 'input', e.key);
+        this.el.emit('input', e.key);
       }
     }
   },
@@ -128,14 +128,14 @@ AFRAME.registerComponent('keyboard', {
     }
     this.currentInput = e.detail;
     if (!this.el.isOpen) {
-      Behaviors.openKeyboard(this.el);
+      Behaviors.openKeyboard(this);
     }
   },
 
   // Fired when an input has been deselected
   didBlurInputEvent: function(e) {
     this.currentInput = null;
-    Behaviors.dismissKeyboard(this.el);
+    Behaviors.dismissKeyboard(this);
   }
 });
 

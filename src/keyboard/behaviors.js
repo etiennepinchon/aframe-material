@@ -1,18 +1,15 @@
 const Assets = require('./assets');
 const Config = require('./config');
 const Utils = require('../utils');
-const Event = require('../core/event');
 const SFX = require('./sfx');
-const Behaviors = {};
-
-Behaviors.el = null;
 
 // -----------------------------------------------------------------------------
 // KEYBOARD METHODS
 
-Behaviors.showKeyboard = function(el) {
-  if (el.o_position) {
-    el.object3D.position.copy(el.o_position);
+function showKeyboard (component) {
+  var el = component.el;
+  if (component.o_position) {
+    el.object3D.position.copy(component.o_position);
   }
   el.isOpen = true;
   for(let item of el.querySelectorAll('[data-ui]') ) {
@@ -24,29 +21,35 @@ Behaviors.showKeyboard = function(el) {
   if (parent) { return; }
   el.sceneEl.appendChild(el);
 };
+module.exports.showKeyboard = showKeyboard;
 
-Behaviors.hideKeyboard = function(el) {
+function hideKeyboard (component) {
+  var el = component.el;
   let position = el.getAttribute("position");
   if (position.x !== -10000) {
-    if (!el.o_position) {
-      el.o_position = new THREE.Vector3();
+    if (!component.o_position) {
+      component.o_position = new THREE.Vector3();
     }
-    el.o_position.copy(position);
+    component.o_position.copy(position);
   }
   el.isOpen = false;
   el.setAttribute("position", "-10000 -10000 -10000");
   el.setAttribute('fadeout', {duration: 1});
 }
+module.exports.hideKeyboard = hideKeyboard;
 
-Behaviors.destroyKeyboard = function(el) {
+function destroyKeyboard (component) {
+  var el = component.el;
   let parent = el.parentNode;
   if (!parent) { return; }
   parent.removeChild(el);
 };
+module.exports.destroyKeyboard = destroyKeyboard;
 
-Behaviors.openKeyboard = function(el) {
-  if (el.o_position) {
-    el.object3D.position.copy(el.o_position);
+function openKeyboard (component) {
+  var el = component.el;
+  if (component.o_position) {
+    el.object3D.position.copy(component.o_position);
   }
   el.isOpen = true;
   el._transitioning = true;
@@ -60,7 +63,7 @@ Behaviors.openKeyboard = function(el) {
       item.children[0].removeEventListener('animationend', animationend)
       setTimeout(function() {
         item.children[1].setAttribute('fadein', {duration: 160});
-        Event.emit(Behaviors.el, 'didopen');
+        el.emit('didopen');
         el._transitioning = false;
       }, 10)
     }
@@ -68,8 +71,10 @@ Behaviors.openKeyboard = function(el) {
     item.children[0].addEventListener('animationend', animationend)
   }
 };
+module.exports.openKeyboard = openKeyboard;
 
-Behaviors.dismissKeyboard = function(el) {
+function dismissKeyboard (component) {
+  var el = component.el;
   el._transitioning = true;
   for(let item of el.querySelectorAll('[data-ui]') ) {
     for (let child of item.children) {
@@ -81,8 +86,8 @@ Behaviors.dismissKeyboard = function(el) {
       setTimeout(function() {
         function animationend() {
           item.children[0].removeEventListener('animationend', animationend);
-          Behaviors.hideKeyboard(el);
-          Event.emit(Behaviors.el, 'diddismiss');
+          hideKeyboard(component);
+          el.emit('diddismiss');
           el._transitioning = false;
         }
         item.children[0].setAttribute('fadeout', {duration: 160});
@@ -93,28 +98,31 @@ Behaviors.dismissKeyboard = function(el) {
     item.children[1].addEventListener('animationend', animationend)
   }
 };
+module.exports.dismissKeyboard = dismissKeyboard;
 
 // -----------------------------------------------------------------------------
 // KEY EVENTS
 
-Behaviors.addKeyEvents = (el)=>{
-  el.addEventListener('click', Behaviors.keyClick);
-  el.addEventListener('mousedown', Behaviors.keyDown);
-  el.addEventListener('mouseup', Behaviors.keyOut);
-  el.addEventListener('raycaster-intersected', Behaviors.keyIn );
-  el.addEventListener('raycaster-intersected-cleared', Behaviors.keyOut );
+function addKeyEvents (component, el) {
+  el.addEventListener('click', () => { keyClick(component, el) });
+  el.addEventListener('mousedown', () => { keyDown(component, el) });
+  el.addEventListener('mouseup', () => { keyOut(component, el) });
+  el.addEventListener('raycaster-intersected', () => { keyIn (component, el) });
+  el.addEventListener('raycaster-intersected-cleared', () => { keyOut (component, el) });
   //triggerdown
   // https://aframe.io/docs/0.6.0/components/hand-controls.html
 };
+module.exports.addKeyEvents = addKeyEvents;
 
 // -----------------------------------------------------------------------------
 // KEYCLICK
 
-Behaviors.keyClick = function() {
-  SFX.keyDown(Behaviors.el);
+function keyClick (keyEl) {
+  var el = keyEl;
+  SFX.keyDown(el);
 
-  let type = this.getAttribute('key-type');
-  let value = this.getAttribute('key-value');
+  let type = el.getAttribute('key-type');
+  let value = el.getAttribute('key-value');
 
   if (type === 'text' || type === 'spacebar') {
     if (type === 'spacebar') { value = ' '; }
@@ -125,76 +133,95 @@ Behaviors.keyClick = function() {
     else if (Behaviors.isSymbols) {
       Behaviors.symbolsToggle();
     }
-    Event.emit(Behaviors.el, 'input', value);
+    el.emit('input', value);
   }
   else if (type === 'shift') {
-    Behaviors.shiftToggle();
+    shiftToggle();
   }
   else if (type === 'symbol') {
-    Behaviors.symbolsToggle();
+    symbolsToggle();
   }
   else if (type === 'backspace') {
-    Event.emit(Behaviors.el, 'backspace');
+    el.emit('backspace');
   }
   else if (type === 'enter') {
-    Event.emit(Behaviors.el, 'input', '\n');
-    Event.emit(Behaviors.el, 'enter', '\n');
+    el.emit('input', '\n');
+    el.emit('enter', '\n');
   }
   else if (type === 'dismiss') {
-    Event.emit(Behaviors.el, 'dismiss');
+    el.emit('dismiss');
   }
 }
+module.exports.keyClick = keyClick;
 
 // -----------------------------------------------------------------------------
 // KEYDOWN
 
-Behaviors.keyDown = function() {
-  if (Behaviors.el._transitioning) { return; }
-  this.object3D.position.z = 0.003;
-  if (this.getAttribute('key-type') === 'spacebar') {
-    this.setAttribute('color', Config.SPACEBAR_COLOR_ACTIVE);
+function keyDown (component, keyEl) {
+  var el = keyEl;
+  var keyHighlight;
+  if (el._transitioning) { return; }
+  el.object3D.position.z = 0.003;
+  if (el.getAttribute('key-type') === 'spacebar') {
+    el.setAttribute('color', Config.SPACEBAR_COLOR_ACTIVE);
   } else {
-    this.setAttribute('color', Config.KEY_COLOR_ACTIVE);
+    keyHighlight = component.hoverHighlight;
+    keyHighlight.object3D.position.copy(el.object3D.position);
+    keyHighlight.object3D.position.x += 0.04;
+    keyHighlight.object3D.position.y += 0.036;
   }
 };
+module.exports.keyDown = keyDown;
 
 // -----------------------------------------------------------------------------
 // KEYIN
 
-Behaviors.keyIn = function() {
-  if (Behaviors.el._transitioning) { return; }
-  if (this.object3D.children[2] && this.object3D.children[2].material && !this.object3D.children[2].material.opacity) {
+function keyIn (component, keyEl) {
+  var el = keyEl;
+  var keyHighlight;
+  if (el._transitioning) { return; }
+  if (el.object3D.children[2] && el.object3D.children[2].material &&
+      !el.object3D.children[2].material.opacity) {
     return
   }
-  SFX.keyIn(Behaviors.el);
-  if (this.getAttribute('key-type') === 'spacebar') {
-    this.setAttribute('color', Config.SPACEBAR_COLOR_HIGHLIGHT);
+  SFX.keyIn(el);
+  if (el.getAttribute('key-type') === 'spacebar') {
+    el.children[0].setAttribute('slice9', 'color', Config.SPACEBAR_COLOR_HIGHLIGHT);
   } else {
-    this.setAttribute('color', Config.KEY_COLOR_HIGHLIGHT);
+    keyHighlight = component.hoverHighlight;
+    keyHighlight.object3D.visible = true;
+    keyHighlight.object3D.position.copy(el.object3D.position);
+    keyHighlight.object3D.position.x += 0.04;
+    keyHighlight.object3D.position.y += 0.036;
   }
 };
+module.exports.keyIn = keyIn;
 
 // -----------------------------------------------------------------------------
 // KEYOUT
 
-Behaviors.keyOut = function() {
-  this.object3D.position.z = 0;
-  if (this.getAttribute('key-type') === 'spacebar') {
-    this.setAttribute('color', Config.KEY_COLOR_ACTIVE);
+function keyOut (component, keyEl) {
+  var el = keyEl;
+  var keyHighlight;
+  el.object3D.position.z = 0;
+  if (el.getAttribute('key-type') === 'spacebar') {
+    el.children[0].setAttribute('slice9', 'color', Config.KEY_COLOR_ACTIVE);
   } else {
-    this.setAttribute('color', Config.KEYBOARD_COLOR);
+    keyHighlight = component.hoverHighlight;
+    keyHighlight.object3D.visible = false;
   }
 }
+module.exports.keyOut = keyOut;
 
 // -----------------------------------------------------------------------------
 // SHIFT
 
-Behaviors.isShiftEnabled = false;
-Behaviors.shiftToggle = function() {
-  Behaviors.isShiftEnabled = !Behaviors.isShiftEnabled;
+function shiftToggle (component) {
+  var el = component.el;
+  component.isShiftEnabled = !component.isShiftEnabled;
 
-  var icon_el = Behaviors.el.shiftKey.querySelector('[data-type]');
-  if (Behaviors.isShiftEnabled) {
+  var icon_el = el.shiftKey.querySelector('[data-type]');
+  if (component.isShiftEnabled) {
     icon_el.setAttribute('src', Assets.aframeKeyboardShiftActive);
   } else {
     icon_el.setAttribute('src', Assets.aframeKeyboardShift);
@@ -206,33 +233,31 @@ Behaviors.shiftToggle = function() {
       let textEl = keyEl.querySelector('a-text');
       if (textEl) {
         let value = textEl.getAttribute('value').toLowerCase();
-        if (this.isShiftEnabled) { value = value.toUpperCase(); }
+        if (el.isShiftEnabled) { value = value.toUpperCase(); }
         textEl.setAttribute('value', value);
       }
     }
   }
 }
+module.exports.shiftToggle = shiftToggle;
 
 // -----------------------------------------------------------------------------
 // SYMBOLS
 
-Behaviors.isSymbols = false;
-Behaviors.symbolsToggle = function() {
-  Behaviors.isSymbols = !Behaviors.isSymbols;
-  if (!Behaviors.isSymbols) {
-    let parent = Behaviors.el.symbolsLayout.parentNode;
-    parent.removeChild(Behaviors.el.symbolsLayout);
-    parent.appendChild(Behaviors.el.alphabeticalLayout);
+function symbolsToggle (component) {
+  var el = component.el;
+  component.isSymbols = !component.isSymbols;
+  if (!component.isSymbols) {
+    let parent = el.symbolsLayout.parentNode;
+    parent.removeChild(el.symbolsLayout);
+    parent.appendChild(el.alphabeticalLayout);
     setTimeout(function() {
-      Utils.updateOpacity(Behaviors.el.alphabeticalLayout, 1);
+      Utils.updateOpacity(el.alphabeticalLayout, 1);
     }, 0)
   } else {
-    let parent = Behaviors.el.alphabeticalLayout.parentNode;
-    parent.removeChild(Behaviors.el.alphabeticalLayout);
-    parent.appendChild(Behaviors.el.symbolsLayout);
+    let parent = el.alphabeticalLayout.parentNode;
+    parent.removeChild(el.alphabeticalLayout);
+    parent.appendChild(el.symbolsLayout);
   }
 }
-
-
-
-module.exports = Behaviors;
+module.exports.symbolsToggle = symbolsToggle;

@@ -45,6 +45,7 @@
     "vr"
   ],
   "dependencies": {
-    "aframe-rounded": "^1.0.3"
+    "aframe-rounded": "^1.0.3",
+    "aframe-slice9-component": "^1.0.0"
   }
 }
