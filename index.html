@@ -4,19 +4,17 @@
     <meta charset="utf-8">
     <title>aframe-material😲😆😛</title>
     <meta name="description" content="Aframe-Material">
-    <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
-    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>
-    <script src="dist/aframe-material.js"></script>
     <script type="text/javascript">
       AFRAME.ASSETS_PATH = "./assets";
     </script>
+    <script src="dist/aframe-material.js"></script>    
   </head>
   <body>
-    <a-scene>
+  <a-scene cursor="rayOrigin: mouse">
       <a-entity laser-controls="hand: right"></a-entity>
-
-      <a-entity> <a-camera look-controls-enabled wasd-controls-enabled mouse-cursor></a-camera></a-entity>
+      <a camera look-controls wasd-controls></a-entity>
 
       <!-- BEGIN INPUTS/KEYBOARD -->
       <a-keyboard physical-keyboard="true"></a-keyboard>
