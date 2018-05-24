@@ -1,4 +1,4 @@
-var Assets = require('./Assets');
+var Assets = require('./assets');
 
 const SFX = {
 
