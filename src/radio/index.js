@@ -10,8 +10,8 @@ AFRAME.registerComponent('radio', {
     name: { type: "string", default: "" },
     value: { type: "string", default: "" },
     label: { type: "string", default: "" },
-    radioColor: { type: "color", default: "#757575"},
-    radioColorChecked: { type: "color", default: "#4076fd"},
+    radioColor: { type: "color", default: "#757575" },
+    radioColorChecked: { type: "color", default: "#4076fd" },
     color: { type: "color", default: "#757575" },
     font: { type: "string", default: "" },
     letterSpacing: { type: "int", default: 0 },
@@ -23,7 +23,7 @@ AFRAME.registerComponent('radio', {
     var that = this;
 
     // Assets
-    Utils.preloadAssets( Assets );
+    Utils.preloadAssets(Assets);
 
     // SFX
     SFX.init(this.el);
@@ -53,12 +53,16 @@ AFRAME.registerComponent('radio', {
     this.el.appendChild(this.label);
 
     // EVENTS
-    this.el.addEventListener('click', function() {
+    this.el.addEventListener('click', function () {
+      var radioButtons = document.getElementsByName(this.components.radio.data.name);
+      for (var radioButton of radioButtons)
+        radioButton.checked = false;
       if (this.components.radio.data.disabled) { return; }
       this.setAttribute('checked', true);
       that.onClick();
     });
-    this.el.addEventListener('mousedown', function() {
+
+    this.el.addEventListener('mousedown', function () {
       if (this.components.radio.data.disabled) {
         return SFX.clickDisabled(this);
       }
@@ -66,13 +70,20 @@ AFRAME.registerComponent('radio', {
     });
 
     Object.defineProperty(this.el, 'value', {
-      get: function() { return this.getAttribute('value'); },
-      set: function(value) { this.setAttribute('value', value); },
+      get: function () { return this.getAttribute('value'); },
+      set: function (value) { this.setAttribute('value', value); },
+      enumerable: true,
+      configurable: true
+    });
+
+    Object.defineProperty(this.el, 'checked', {
+      get: function () { return this.getAttribute('checked'); },
+      set: function (checked) { this.setAttribute('checked', checked); },
       enumerable: true,
       configurable: true
     });
   },
-  onClick: function(noemit) {
+  onClick: function (noemit) {
     if (this.data.name) {
       let nearestForm = this.el.closest("a-form");
       if (nearestForm) {
@@ -81,7 +92,7 @@ AFRAME.registerComponent('radio', {
         children.reverse();
         for (let child of children) {
           // Radio + not disabled
-          if (child.components.radio ) {
+          if (child.components.radio) {
             // Currently checked
             if (child === this.el && child.hasAttribute('checked')) {
               didCheck = true;
@@ -104,18 +115,18 @@ AFRAME.registerComponent('radio', {
       }
     }
   },
-  check: function() {
+  check: function () {
     this.outline.setAttribute('color', this.data.radioColorChecked);
     this.circle.setAttribute('color', this.data.radioColorChecked);
     this.circle.setAttribute('visible', true);
     if (this.data.disabled) { this.disabled(); }
   },
-  uncheck: function() {
+  uncheck: function () {
     this.outline.setAttribute('color', this.data.radioColor);
     this.circle.setAttribute('visible', false);
     if (this.data.disabled) { this.disabled(); }
   },
-  disabled: function() {
+  disabled: function () {
     this.outline.setAttribute('color', this.data.radioColor);
     this.circle.setAttribute('color', this.data.radioColor);
   },
@@ -125,12 +136,12 @@ AFRAME.registerComponent('radio', {
 
     // HITBOX
     this.hitbox.setAttribute('width', this.data.width)
-    this.hitbox.setAttribute('position', this.data.width/2+' 0 0.001');
+    this.hitbox.setAttribute('position', this.data.width / 2 + ' 0 0.001');
 
     let props = {
       color: this.data.color,
       align: 'left',
-      wrapCount: 10*(this.data.width+0.2),
+      wrapCount: 10 * (this.data.width + 0.2),
       width: this.data.width,
     }
     if (this.data.font) { props.font = this.data.font; }
@@ -139,14 +150,14 @@ AFRAME.registerComponent('radio', {
     props.value = this.data.label;
     props.color = this.data.color;
     this.label.setAttribute('text', props);
-    this.label.setAttribute('position', this.data.width/2+0.24+' 0 0.002');
+    this.label.setAttribute('position', this.data.width / 2 + 0.24 + ' 0 0.002');
 
     // TRIM TEXT IF NEEDED.. @TODO: optimize this mess..
     function getTextWidth(el, _widthFactor) {
       if (!el.object3D || !el.object3D.children || !el.object3D.children[0]) { return 0; }
       let v = el.object3D.children[0].geometry.visibleGlyphs;
       if (!v) { return 0; }
-      v = v[v.length-1];
+      v = v[v.length - 1];
       if (!v) { return 0; }
       if (v.line) {
         props.value = props.value.slice(0, -1);
@@ -154,7 +165,7 @@ AFRAME.registerComponent('radio', {
         return getTextWidth(el);
       } else {
         if (!_widthFactor) { _widthFactor = Utils.getWidthFactor(el, props.wrapCount); }
-        v = (v.position[0] + v.data.width) / (_widthFactor/that.data.width);
+        v = (v.position[0] + v.data.width) / (_widthFactor / that.data.width);
         let textRatio = v / that.data.width;
         if (textRatio > 1) {
           props.value = props.value.slice(0, -1);
@@ -164,12 +175,12 @@ AFRAME.registerComponent('radio', {
       }
       return v;
     }
-    setTimeout(function() {
+    setTimeout(function () {
       if (that.data.label.length) {
         getTextWidth(that.label);
       }
       if (that.data.disabled) {
-        let timer = setInterval(function() {
+        let timer = setInterval(function () {
           if (that.outline.object3D.children[0]) {
             clearInterval(timer);
             Utils.updateOpacity(that.outline, 0.4);
@@ -178,7 +189,7 @@ AFRAME.registerComponent('radio', {
           }
         }, 10)
       } else {
-        let timer = setInterval(function() {
+        let timer = setInterval(function () {
           if (that.outline.object3D.children[0]) {
             clearInterval(timer);
             Utils.updateOpacity(that.outline, 1);
@@ -189,10 +200,10 @@ AFRAME.registerComponent('radio', {
       }
     }, 0);
   },
-  tick: function () {},
-  remove: function () {},
-  pause: function () {},
-  play: function () {}
+  tick: function () { },
+  remove: function () { },
+  pause: function () { },
+  play: function () { }
 });
 
 AFRAME.registerPrimitive('a-radio', {
