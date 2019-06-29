@@ -1,0 +1,13 @@
+hey man,
+
+     It seems that Aframe-material doesn't work past aframe 0.6.1. I have a cloned copy, on my website, and it works wonderfully at aframe 0.6.1.
+     but i have not been able to get it to work with aframe 0.7.x., aframe 0.8.x., nor aframe 0.9.2.
+     I figure that something Aframe-material used was changed in the newer version of aframe, and now it no longer functions.
+     i compared changes made, with a tool here on Github, but i couldn't nail down what the problem is
+     Maybe I am wrong, maybe it works and I missing something simple? I dont know.
+     but that's why I have reached out to you; Hoping you can shed some light on this, or point me in the right direction?
+     
+     I appreciate the nice work on Aframe-material. Just what I needed to improve my scene substantially. 
+     also, the google resonance thing is cool, too.  
+     
+     -MJimRenman87
